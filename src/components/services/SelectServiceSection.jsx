@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { mainCategories } from '../../data/serviceCategories';
-import { CheckCircle2, Sparkles } from '../common/Icons';
+import React, { useState, useEffect } from "react";
+import { mainCategories } from "../../data/serviceCategories";
+import { CheckCircle2, Sparkles } from "../common/Icons";
 
 const SelectServiceSection = ({ onSelectCategory }) => {
   const [activeCategory, setActiveCategory] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const id = setTimeout(() => setMounted(true), 30);
+    return () => clearTimeout(id);
+  }, []);
 
   const handleCardClick = (cat) => {
     setActiveCategory(cat.id);
@@ -13,14 +19,15 @@ const SelectServiceSection = ({ onSelectCategory }) => {
   };
 
   return (
-    <section id="select-service" className="py-6 sm:py-10 lg:py-16 bg-slate-50 relative">
-      
+    <section
+      id="select-service"
+      className="py-6 sm:py-10 lg:py-16 bg-slate-50 relative"
+    >
       {/* Background ambient light */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-teal-200/20 rounded-full blur-3xl -z-10 pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-sky-200/20 rounded-full blur-3xl -z-10 pointer-events-none" />
 
       <div className="max-w-6xl xl:max-w-7xl mx-auto px-3.5 sm:px-4 lg:px-8">
-        
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-100/80 border border-teal-200 text-teal-800 text-xs font-extrabold uppercase tracking-wider shadow-sm">
@@ -33,40 +40,43 @@ const SelectServiceSection = ({ onSelectCategory }) => {
           </h2>
 
           <p className="text-xs sm:text-base text-slate-600 font-extrabold max-w-2xl mx-auto">
-            Select from our verified network of doctors, electricians, and plumbers.
+            Select from our verified network of doctors, electricians, and
+            plumbers.
           </p>
         </div>
 
         {/* 3 Main Service Cards Grid: 1 col on Mobile, 3 cols on iPad & Mac/PC */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3.5 lg:gap-6">
-          {mainCategories.map((cat) => {
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3.5 lg:gap-6 items-stretch">
+          {/** mount state to stagger card entrance */}
+          {/** each card gets a small delay based on index */}
+          {/** accessible: animation only on first mount */}
+          {mainCategories.map((cat, index) => {
             const isSelected = activeCategory === cat.id;
+            const imgClass =
+              cat.id === "doctor"
+                ? "w-full h-full group-hover:scale-105 transition-transform duration-500 object-cover object-top"
+                : "w-full h-full group-hover:scale-105 transition-transform duration-500 object-cover object-center";
 
             return (
               <div
                 key={cat.id}
-                className={`group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border transition-all duration-300 flex flex-col justify-between ${
+                style={{ transitionDelay: `${index * 120}ms` }}
+                className={`group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border transform transition-all duration-500 ease-out flex flex-col justify-between h-full ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} ${
                   isSelected
-                    ? 'border-teal-600 ring-2 sm:ring-4 ring-teal-500/30 shadow-xl -translate-y-1'
-                    : 'border-slate-200/90 shadow-md hover:shadow-xl hover:-translate-y-1 hover:border-teal-300'
+                    ? "border-teal-600 ring-2 sm:ring-4 ring-teal-500/30 shadow-xl -translate-y-1"
+                    : "border-slate-200/90 shadow-md hover:shadow-xl hover:-translate-y-1 hover:border-teal-300"
                 }`}
               >
-
-                {/* Card Image Container (h-60 on Mobile for full uncropped face, h-48 on iPad, h-56 on Mac/PC) */}
-                <div className="relative h-60 sm:h-48 lg:h-56 w-full overflow-hidden bg-slate-100">
-                  <img
-                    src={cat.image}
-                    alt={cat.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
+                {/* Card Image Container: enforce consistent aspect ratios so cards match across rows */}
+                <div className="relative w-full overflow-hidden bg-slate-100 aspect-[4/3] sm:aspect-[4/3] md:aspect-[4/3] lg:aspect-[4/3]">
+                  <img src={cat.image} alt={cat.title} className={imgClass} />
                 </div>
 
                 {/* Card Body */}
                 <div className="p-4 sm:p-4 lg:p-6 flex-1 flex flex-col justify-between space-y-3.5 sm:space-y-4">
-                  
                   {/* Title & Count */}
                   <div className="space-y-0.5 text-left">
-                    <h3 className="text-lg sm:text-lg lg:text-xl font-black text-slate-900 tracking-tight leading-snug group-hover:text-teal-700 transition-colors">
+                    <h3 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 tracking-tight leading-snug group-hover:text-teal-700 transition-colors">
                       {cat.title}
                     </h3>
                     <p className="text-xs font-bold text-teal-700">
@@ -74,7 +84,7 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                     </p>
                   </div>
 
-                  <p className="text-xs sm:text-xs lg:text-sm text-slate-600 font-medium leading-relaxed text-left">
+                  <p className="text-sm sm:text-base lg:text-sm text-slate-600 font-medium leading-relaxed text-left">
                     {cat.description}
                   </p>
 
@@ -85,7 +95,9 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                     </div>
                     <div className="flex items-center space-x-2 text-xs sm:text-xs lg:text-sm font-bold text-slate-800 truncate">
                       <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                      <span className="truncate">Transparent Doorstep Rates</span>
+                      <span className="truncate">
+                        Transparent Doorstep Rates
+                      </span>
                     </div>
                   </div>
 
@@ -96,8 +108,8 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                       onClick={() => handleCardClick(cat)}
                       className={`w-full py-3 sm:py-3 px-4 rounded-xl sm:rounded-2xl font-extrabold text-xs sm:text-sm lg:text-base transition-all duration-300 flex items-center justify-center space-x-2 ${
                         isSelected
-                          ? 'bg-teal-800 text-white shadow-lg ring-2 ring-teal-600'
-                          : 'bg-teal-700 hover:bg-teal-800 text-white border border-teal-700 shadow-md hover:shadow-lg'
+                          ? "bg-teal-800 text-white shadow-lg ring-2 ring-teal-600"
+                          : "bg-teal-700 hover:bg-teal-800 text-white border border-teal-700 shadow-md hover:shadow-lg"
                       }`}
                     >
                       {isSelected ? (
@@ -110,14 +122,11 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                       )}
                     </button>
                   </div>
-
                 </div>
-
               </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );
