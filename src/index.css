@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 60-30-10 Color Palette Tokens */
+    --color-bg-primary: #f8fafc; /* 60%: Slate 50 Neutral Light */
+    --color-bg-secondary: #f0fdfa; /* 60%: Soft Mint/Teal tint */
+    --color-surface-card: #ffffff; /* 60%: Pure White Card Surface */
+
+    --color-text-main: #0f172a; /* 30%: Slate 900 Heading/Primary text */
+    --color-text-muted: #475569; /* 30%: Slate 600 Body text */
+    --color-border-subtle: #e2e8f0; /* 30%: Subtle slate border */
+    --color-medical-teal: #0f766e; /* 30%: Deep Medical Teal */
+    --color-medical-dark: #0f172a; /* 30%: Deep Clinical Navy */
+
+    --color-accent-teal: #0d9488; /* 10%: Active Teal CTA Glow */
+    --color-accent-sky: #0284c7; /* 10%: Medical Cyan Accent */
+    --color-accent-emerald: #10b981; /* 10%: Success/Available Pulse Green */
+    --color-accent-coral: #f43f5e; /* 10%: Emergency badge */
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-main);
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Complex UI Styling for Medical Consultation Platform */
+
+/* Glassmorphism Navbar Header */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Soft Ambient Background Glows */
+.bg-medical-mesh {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(204, 251, 241, 0.5) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(224, 242, 254, 0.6) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(240, 253, 250, 0.4) 0px, transparent 50%);
+}
+
+/* Card Hover Elevation & Glass Glow */
+.medical-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.medical-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 30px -10px rgba(15, 118, 110, 0.12),
+    0 8px 15px -6px rgba(15, 118, 110, 0.08);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0d9488;
+}
+
+/* Shimmer pulse badge for live availability */
+@keyframes softPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+.pulse-live {
+  animation: softPulse 2s infinite ease-in-out;
+}
+
+/* Subtle Gradient Text Highlight */
+.text-gradient-teal {
+  background: linear-gradient(135deg, #0f766e 0%, #0284c7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

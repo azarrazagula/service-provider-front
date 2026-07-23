@@ -1,0 +1,62 @@
+export const doctorsData = [
+  {
+    id: 'd1',
+    name: 'Dr. Arul S. Nathan',
+    specialty: 'Senior Cardiologist',
+    qualification: 'MBBS, MD, DM (Cardiology)',
+    experience: '14+ Years Exp',
+    rating: 4.95,
+    reviewsCount: 420,
+    hospital: 'City Heart Institute',
+    fee: '₹799',
+    availableToday: true,
+    nextSlot: 'Today at 04:30 PM',
+    image: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400',
+    tags: ['Heart Care', 'ECG Analysis', 'Hypertension']
+  },
+  {
+    id: 'd2',
+    name: 'Dr. Priya Ramachandran',
+    specialty: 'General Physician & Diabetologist',
+    qualification: 'MBBS, DNB (Internal Medicine)',
+    experience: '10+ Years Exp',
+    rating: 4.90,
+    reviewsCount: 680,
+    hospital: 'Apex Care Clinic',
+    fee: '₹499',
+    availableToday: true,
+    nextSlot: 'Today at 03:15 PM',
+    image: 'https://images.unsplash.com/photo-1594824813566-78a9c27943d0?auto=format&fit=crop&q=80&w=400',
+    tags: ['Diabetes', 'Fever & Infection', 'Wellness']
+  },
+  {
+    id: 'd3',
+    name: 'Dr. Rajesh Kannan',
+    specialty: 'Senior Pediatrician',
+    qualification: 'MBBS, MD (Pediatrics)',
+    experience: '12+ Years Exp',
+    rating: 4.88,
+    reviewsCount: 310,
+    hospital: 'Rainbow Children Center',
+    fee: '₹599',
+    availableToday: true,
+    nextSlot: 'Today at 05:00 PM',
+    image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400',
+    tags: ['Child Healthcare', 'Vaccination', 'Growth']
+  },
+  {
+    id: 'd4',
+    name: 'Dr. Deepa Subash',
+    specialty: 'Consultant Neurologist',
+    qualification: 'MBBS, DM (Neurology)',
+    experience: '16+ Years Exp',
+    rating: 4.96,
+    reviewsCount: 540,
+    hospital: 'Neuro Care Super Specialty',
+    fee: '₹899',
+    availableToday: false,
+    nextSlot: 'Tomorrow at 10:00 AM',
+    image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400',
+    tags: ['Migraine', 'Stroke Recovery', 'Spine']
+  }
+];
