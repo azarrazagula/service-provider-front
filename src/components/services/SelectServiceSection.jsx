@@ -1,131 +1,74 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { mainCategories } from "../../data/serviceCategories";
-import { CheckCircle2, Sparkles } from "../common/Icons";
 
 const SelectServiceSection = ({ onSelectCategory }) => {
-  const [activeCategory, setActiveCategory] = useState(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const id = setTimeout(() => setMounted(true), 30);
-    return () => clearTimeout(id);
-  }, []);
-
-  const handleCardClick = (cat) => {
-    setActiveCategory(cat.id);
-    if (onSelectCategory) {
-      onSelectCategory(cat);
-    }
-  };
-
   return (
-    <section
-      id="select-service"
-      className="py-6 sm:py-10 lg:py-16 bg-slate-50 relative"
-    >
-      {/* Background ambient light */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-teal-200/20 rounded-full blur-3xl -z-10 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-sky-200/20 rounded-full blur-3xl -z-10 pointer-events-none" />
-
-      <div className="max-w-6xl xl:max-w-7xl mx-auto px-3.5 sm:px-4 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-100/80 border border-teal-200 text-teal-800 text-xs font-extrabold uppercase tracking-wider shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 shrink-0" />
-            <span>Choose Your Required Service</span>
-          </div>
-
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Which service do you want?
+    <section id="select-service" className="bg-slate-50 py-16 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.4em] text-teal-600">
+            Choose your service
+          </p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Book a trusted provider in minutes.
           </h2>
-
-          <p className="text-xs sm:text-base text-slate-600 font-extrabold max-w-2xl mx-auto">
-            Select from our verified network of doctors, electricians, and
-            plumbers.
+          <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+            Pick one of our top service categories and see vetted professionals
+            ready to help near you.
           </p>
         </div>
 
-        {/* 3 Main Service Cards Grid: 1 col on Mobile, 3 cols on iPad & Mac/PC */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3.5 lg:gap-6 items-stretch">
-          {/** mount state to stagger card entrance */}
-          {/** each card gets a small delay based on index */}
-          {/** accessible: animation only on first mount */}
-          {mainCategories.map((cat, index) => {
-            const isSelected = activeCategory === cat.id;
-            const imgClass =
-              cat.id === "doctor"
-                ? "w-full h-full group-hover:scale-105 transition-transform duration-500 object-cover object-top"
-                : "w-full h-full group-hover:scale-105 transition-transform duration-500 object-cover object-center";
+        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {mainCategories.map((category) => (
+            <button
+              key={category.id}
+              type="button"
+              onClick={() => onSelectCategory?.(category)}
+              className="group flex flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white text-left shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
+              <div className="relative h-70 w-full overflow-hidden bg-slate-100">
+                <img
+                  src={category.image}
+                  alt={category.title}
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+              </div>
 
-            return (
-              <div
-                key={cat.id}
-                style={{ transitionDelay: `${index * 120}ms` }}
-                className={`group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border transform transition-all duration-500 ease-out flex flex-col justify-between h-full ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} ${
-                  isSelected
-                    ? "border-teal-600 ring-2 sm:ring-4 ring-teal-500/30 shadow-xl -translate-y-1"
-                    : "border-slate-200/90 shadow-md hover:shadow-xl hover:-translate-y-1 hover:border-teal-300"
-                }`}
-              >
-                {/* Card Image Container: enforce consistent aspect ratios so cards match across rows */}
-                <div className="relative w-full overflow-hidden bg-slate-100 aspect-[4/3] sm:aspect-[4/3] md:aspect-[4/3] lg:aspect-[4/3]">
-                  <img src={cat.image} alt={cat.title} className={imgClass} />
+              <div className="flex flex-1 flex-col gap-4 p-6">
+                <div>
+                  <div className="inline-flex rounded-full bg-teal-100 px-3 py-1 text-sm font-semibold text-teal-700">
+                    {category.badge}
+                  </div>
                 </div>
 
-                {/* Card Body */}
-                <div className="p-4 sm:p-4 lg:p-6 flex-1 flex flex-col justify-between space-y-3.5 sm:space-y-4">
-                  {/* Title & Count */}
-                  <div className="space-y-0.5 text-left">
-                    <h3 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 tracking-tight leading-snug group-hover:text-teal-700 transition-colors">
-                      {cat.title}
-                    </h3>
-                    <p className="text-xs font-bold text-teal-700">
-                      {cat.count}
-                    </p>
-                  </div>
-
-                  <p className="text-sm sm:text-base lg:text-sm text-slate-600 font-medium leading-relaxed text-left">
-                    {cat.description}
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-900">
+                    {category.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    {category.description}
                   </p>
+                </div>
 
-                  <div className="space-y-1.5 pt-2 border-t border-slate-100">
-                    <div className="flex items-center space-x-2 text-xs sm:text-xs lg:text-sm font-bold text-slate-800 truncate">
-                      <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                      <span className="truncate">100% Background Verified</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-xs sm:text-xs lg:text-sm font-bold text-slate-800 truncate">
-                      <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                      <span className="truncate">
-                        Transparent Doorstep Rates
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* SELECT SERVICE BUTTON */}
-                  <div className="pt-1">
-                    <button
-                      type="button"
-                      onClick={() => handleCardClick(cat)}
-                      className={`w-full py-3 sm:py-3 px-4 rounded-xl sm:rounded-2xl font-extrabold text-xs sm:text-sm lg:text-base transition-all duration-300 flex items-center justify-center space-x-2 ${
-                        isSelected
-                          ? "bg-teal-800 text-white shadow-lg ring-2 ring-teal-600"
-                          : "bg-teal-700 hover:bg-teal-800 text-white border border-teal-700 shadow-md hover:shadow-lg"
-                      }`}
-                    >
-                      {isSelected ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4 text-teal-300" />
-                          <span>Service Selected</span>
-                        </>
-                      ) : (
-                        <span>Select Service</span>
-                      )}
-                    </button>
+                <div className="mt-auto flex flex-wrap items-center gap-3 text-sm">
+                  <span className="rounded-2xl bg-slate-100 px-3 py-1 font-medium text-slate-700">
+                    {category.count}
+                  </span>
+                  <div className="flex items-center gap-2 rounded-2xl bg-teal-50 px-3 py-1 border">
+                    <span className="font-bold text-yellow-300">
+                      <span className="text-slate-600 text-xs">
+                        {category.rating}
+                      </span>{" "}
+                      ★
+                    </span>
+                    <span className="text-teal-700 font-semibold">
+                      {category.reviews}
+                    </span>
                   </div>
                 </div>
               </div>
-            );
-          })}
+            </button>
+          ))}
         </div>
       </div>
     </section>

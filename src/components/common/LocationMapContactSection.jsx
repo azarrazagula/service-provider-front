@@ -1,23 +1,15 @@
-import React from 'react';
-import {
-  ShieldCheck,
-  Phone,
-  Mail,
-  MapPin,
-  WhatsApp,
-  Instagram,
-  Facebook,
-  YouTube
-} from './Icons';
+import React from "react";
+import { ShieldCheck, Phone, Mail, MapPin } from "./Icons";
 
 const LocationMapContactSection = () => {
   return (
-    <section id="location-map" className="py-10 sm:py-14 bg-slate-50 relative overflow-hidden border-t border-slate-200">
+    <section
+      id="location-map"
+      className="py-10 sm:py-14 bg-slate-50 relative overflow-hidden border-t border-slate-200"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* LIGHT MAP CONTAINER WITH EMBEDDED MAP */}
         <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white mb-8 sm:mb-10">
-          
           {/* Top-Left Open in Maps Button */}
           <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20">
             <a
@@ -43,12 +35,10 @@ const LocationMapContactSection = () => {
             referrerPolicy="no-referrer-when-downgrade"
             className="w-full h-full filter saturate-100"
           />
-
         </div>
 
         {/* BELOW MAP: LARGE BOLD CONTACT & LOCATION DETAILS */}
         <div className="relative bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10">
-          
           {/* LEFT COLUMN: BRAND LOGO & TAGLINE */}
           <div className="lg:w-5/12 space-y-3 text-left border-b lg:border-b-0 lg:border-r border-slate-100 pb-6 lg:pb-0 lg:pr-8 w-full">
             <div className="flex items-center space-x-3">
@@ -72,16 +62,17 @@ const LocationMapContactSection = () => {
 
           {/* RIGHT COLUMN: CONTACT & ADDRESS */}
           <div className="lg:w-6/12 space-y-4 text-left w-full">
-            
             {/* PHONE NUMBERS */}
             <div className="flex items-start space-x-3.5">
               <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200 mt-0.5">
                 <Phone className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Direct Phone & WhatsApp</span>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                  Direct Phone & WhatsApp
+                </span>
                 <span className="text-base sm:text-xl font-bold text-slate-900 tracking-tight">
-                  +91 90471 20120, +91 90471 13114
+                  +91 1234567890
                 </span>
               </div>
             </div>
@@ -92,7 +83,9 @@ const LocationMapContactSection = () => {
                 <Mail className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Official Support Email</span>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                  Official Support Email
+                </span>
                 <span className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                   support@serviceprovider.com
                 </span>
@@ -105,51 +98,17 @@ const LocationMapContactSection = () => {
                 <MapPin className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Headquarters & Hubs</span>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                  Headquarters & Hubs
+                </span>
                 <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-snug">
-                  Anna Salai, Chennai • Coimbatore • Madurai • Trichy • Salem - 600 002.
+                  Anna Salai, Chennai • Coimbatore • Madurai • Trichy • Salem -
+                  600 002.
                 </p>
               </div>
             </div>
-
           </div>
-
-          {/* RIGHT FLOATING SOCIAL MEDIA ICONS */}
-          <div className="flex lg:flex-col items-center justify-center gap-3 shrink-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100 w-full lg:w-auto">
-            <a
-              href="https://wa.me/919047120120"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-md hover:scale-105 transition-all"
-              aria-label="WhatsApp"
-            >
-              <WhatsApp className="w-5 h-5" />
-            </a>
-            <a
-              href="#instagram"
-              className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shadow-md hover:scale-105 transition-all"
-              aria-label="Instagram"
-            >
-              <Instagram className="w-4 h-4" />
-            </a>
-            <a
-              href="#facebook"
-              className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-md hover:scale-105 transition-all"
-              aria-label="Facebook"
-            >
-              <Facebook className="w-4 h-4" />
-            </a>
-            <a
-              href="#youtube"
-              className="w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-md hover:scale-105 transition-all"
-              aria-label="YouTube"
-            >
-              <YouTube className="w-4 h-4" />
-            </a>
-          </div>
-
         </div>
-
       </div>
     </section>
   );

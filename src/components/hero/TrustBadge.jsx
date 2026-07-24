@@ -1,12 +1,27 @@
-import React from 'react';
-import { Users, Award, ShieldCheck, Star } from '../common/Icons';
+import React from "react";
+import { Users, Award, ShieldCheck, Sparkles } from "../common/Icons";
 
 const TrustBadge = () => {
   const stats = [
-    { id: 1, icon: Users, value: '50,000+', label: 'Happy Customers Served' },
-    { id: 2, icon: Award, value: '1,200+', label: 'Doctors, Electricians & Plumbers' },
-    { id: 3, icon: ShieldCheck, value: '100%', label: 'Background Verified Pros' },
-    { id: 4, icon: Star, value: '4.95 / 5', label: 'Platform Trust Rating' },
+    { id: 1, icon: Users, value: "50,000+", label: "Happy Customers Served" },
+    {
+      id: 2,
+      icon: Award,
+      value: "1,200+",
+      label: "Doctors, Electricians & Plumbers",
+    },
+    {
+      id: 3,
+      icon: ShieldCheck,
+      value: "100%",
+      label: "Background Verified Pros",
+    },
+    {
+      id: 4,
+      icon: Sparkles,
+      value: "4.95 / 5",
+      label: "Platform Trust Rating",
+    },
   ];
 
   return (
