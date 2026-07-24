@@ -55,13 +55,13 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                     {category.count}
                   </span>
                   <div className="flex items-center gap-2 rounded-2xl bg-teal-50 px-3 py-1 border">
-                    <span className="font-bold text-yellow-300">
+                    <span className="font-bold text-yellow-400">
                       <span className="text-slate-600 text-xs">
                         {category.rating}
                       </span>{" "}
                       ★
                     </span>
-                    <span className="text-teal-700 font-semibold">
+                    <span className="text-teal-700 font-extrabold">
                       {category.reviews}
                     </span>
                   </div>

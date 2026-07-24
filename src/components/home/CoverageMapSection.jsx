@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, CheckCircle2, Users, Sparkles } from './Icons';
+import { MapPin, CheckCircle2, Users, Sparkles } from '../common/Icons';
 
 const citiesData = [
   {

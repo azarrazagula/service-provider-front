@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import Navbar from "./components/common/Navbar";
-import HeroSection from "./components/hero/HeroSection";
-import TrustBadge from "./components/hero/TrustBadge";
-import SelectServiceSection from "./components/services/SelectServiceSection";
-import LocationMapContactSection from "./components/common/LocationMapContactSection";
+import HeroSection from "./components/home/HeroSection";
+import TrustBadge from "./components/home/TrustBadge";
+import SelectServiceSection from "./components/home/SelectServiceSection";
+import LocationMapContactSection from "./components/home/LocationMapContactSection";
 import Footer from "./components/common/Footer";
+import AuthModal from "./components/auth/AuthModal";
 import { CheckCircle2, X } from "./components/common/Icons";
+import { getStoredUser, clearAuthData } from "./components/auth/authService";
 
 function App() {
   const [notification, setNotification] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => getStoredUser());
 
   const showNotification = (msg) => {
     setNotification(msg);
@@ -22,6 +26,17 @@ function App() {
     showNotification(
       `You selected: ${cat.title}. Next, pick a provider below or choose your slot.`,
     );
+  };
+
+  const handleAuthSuccess = ({ user, message }) => {
+    setCurrentUser(user);
+    showNotification(message || `Welcome, ${user.name}!`);
+  };
+
+  const handleLogout = () => {
+    clearAuthData();
+    setCurrentUser(null);
+    showNotification("Logged out successfully.");
   };
 
   return (
@@ -44,7 +59,12 @@ function App() {
       )}
 
       {/* Navigation Header */}
-      <Navbar onOpenLogin={() => showNotification("Login modal opened")} />
+      <Navbar
+        onOpenLogin={() => setIsAuthModalOpen(true)}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+      />
+
       {/* Main Content Area */}
       <main className="flex-grow">
         {/* Section 1: Hero Section */}
@@ -61,8 +81,7 @@ function App() {
         {/* Section 2: Which service do you want? (Doctor, Electrician, Plumber) */}
         <SelectServiceSection onSelectCategory={handleSelectCategory} />
 
-        {/* Section 4: Poetic Trust Banner */}
-        {/* Section 5: Clean Light Location Map & Large Contact Section (Placed RIGHT BEFORE Footer!) */}
+        {/* Section 4: Location Map & Large Contact Section */}
         <LocationMapContactSection />
       </main>
 
@@ -70,6 +89,11 @@ function App() {
       <Footer />
 
       {/* Login Popup Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

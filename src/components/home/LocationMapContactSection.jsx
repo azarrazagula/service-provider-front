@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldCheck, Phone, Mail, MapPin } from "./Icons";
+import { ShieldCheck, Phone, Mail, MapPin } from "../common/Icons";
 
 const LocationMapContactSection = () => {
   return (
