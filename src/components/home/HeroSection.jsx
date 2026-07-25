@@ -121,82 +121,82 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
   const ctaRef = useRef(null);
   const desktopSliderRef = useRef(null);
 
-  // Cycle slides automatically every 4 seconds
+  // Cycle slides automatically every 5 seconds (more relaxed reading pace)
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % doctorSlides.length);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
-  // 1. GSAP Master Page Entrance Timeline on Mount
+  // 1. GSAP Master Page Entrance Timeline on Mount (Smooth & Elegant Pace)
   useEffect(() => {
     const tl = gsap.timeline({
-      defaults: { duration: 0.6, ease: "power3.out" },
+      defaults: { duration: 0.9, ease: "power2.out" },
     });
 
     if (headingRef.current) {
       tl.fromTo(
         headingRef.current,
-        { opacity: 0, y: 40, scale: 0.96 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.7 }
+        { opacity: 0, y: 30, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.0 }
       );
     }
 
     if (descRef.current) {
       tl.fromTo(
         descRef.current,
-        { opacity: 0, y: 25 },
-        { opacity: 1, y: 0, duration: 0.5 },
-        "-=0.4"
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8 },
+        "-=0.6"
       );
     }
 
     if (quotesRef.current) {
       tl.fromTo(
         quotesRef.current,
-        { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, duration: 0.5 },
-        "-=0.3"
+        { opacity: 0, x: -15 },
+        { opacity: 1, x: 0, duration: 0.75 },
+        "-=0.5"
       );
     }
 
     if (featuresRef.current && featuresRef.current.children) {
       tl.fromTo(
         featuresRef.current.children,
-        { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.35, stagger: 0.08 },
-        "-=0.3"
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1 },
+        "-=0.5"
       );
     }
 
     if (ctaRef.current && ctaRef.current.children) {
       tl.fromTo(
         ctaRef.current.children,
-        { opacity: 0, scale: 0.9 },
-        { opacity: 1, scale: 1, duration: 0.45, stagger: 0.1, ease: "back.out(1.5)" },
-        "-=0.25"
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 0.7, stagger: 0.12, ease: "back.out(1.4)" },
+        "-=0.4"
       );
     }
 
     if (desktopSliderRef.current) {
       tl.fromTo(
         desktopSliderRef.current,
-        { opacity: 0, x: 50, scale: 0.92 },
-        { opacity: 1, x: 0, scale: 1, duration: 0.8, ease: "power3.out" },
-        "-=0.6"
+        { opacity: 0, x: 40, scale: 0.94 },
+        { opacity: 1, x: 0, scale: 1, duration: 1.1, ease: "power2.out" },
+        "-=0.8"
       );
     }
   }, []);
 
-  // 2. GSAP Timeline Animation ONLY on text content when slide changes
+  // 2. GSAP Timeline Animation ONLY on text content when slide changes (Smooth & Relaxed)
   useEffect(() => {
     if (animatedContentRef.current) {
       const slideTl = gsap.timeline();
       slideTl.fromTo(
         animatedContentRef.current.children,
-        { opacity: 0, y: 14 },
-        { opacity: 1, y: 0, duration: 0.45, stagger: 0.05, ease: "power2.out" }
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.85, stagger: 0.08, ease: "power2.out" }
       );
     }
   }, [currentIndex]);

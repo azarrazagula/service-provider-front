@@ -18,30 +18,30 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onSuccess }) => {
     setPendingEmail('');
   }, [initialMode, isOpen]);
 
-  // GSAP Timeline Modal Entrance Animation
+  // GSAP Timeline Modal Entrance Animation (Smooth & Relaxed Pace)
   useEffect(() => {
     if (isOpen) {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
 
       if (backdropRef.current) {
-        tl.fromTo(backdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.35 });
+        tl.fromTo(backdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.5 });
       }
 
       if (modalBoxRef.current) {
         tl.fromTo(
           modalBoxRef.current,
-          { opacity: 0, scale: 0.86, y: 35, rotateX: -8 },
-          { opacity: 1, scale: 1, y: 0, rotateX: 0, duration: 0.5, ease: 'back.out(1.5)' },
-          '-=0.25'
+          { opacity: 0, scale: 0.9, y: 25, rotateX: -6 },
+          { opacity: 1, scale: 1, y: 0, rotateX: 0, duration: 0.75, ease: 'back.out(1.2)' },
+          '-=0.35'
         );
       }
 
       if (headerContentRef.current && headerContentRef.current.children) {
         tl.fromTo(
           headerContentRef.current.children,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.35, stagger: 0.06 },
-          '-=0.3'
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 },
+          '-=0.4'
         );
       }
     }
@@ -55,10 +55,10 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onSuccess }) => {
     });
 
     if (modalBoxRef.current) {
-      tl.to(modalBoxRef.current, { opacity: 0, scale: 0.9, y: 20, duration: 0.25, ease: 'power2.in' });
+      tl.to(modalBoxRef.current, { opacity: 0, scale: 0.94, y: 15, duration: 0.4, ease: 'power2.in' });
     }
     if (backdropRef.current) {
-      tl.to(backdropRef.current, { opacity: 0, duration: 0.2 }, '-=0.15');
+      tl.to(backdropRef.current, { opacity: 0, duration: 0.3 }, '-=0.2');
     }
   };
 
