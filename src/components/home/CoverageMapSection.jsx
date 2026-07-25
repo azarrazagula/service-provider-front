@@ -63,7 +63,7 @@ const CoverageMapSection = () => {
   const [selectedCity, setSelectedCity] = useState(citiesData[0]);
 
   return (
-    <section id="coverage-map" className="py-12 sm:py-16 bg-slate-900 text-white relative overflow-hidden border-t border-slate-800">
+    <section id="coverage-map" className="bg-slate-900 text-white relative overflow-hidden border-t border-slate-800" style={{ paddingTop: 'var(--space-section)', paddingBottom: 'var(--space-section)' }}>
       
       {/* Background Ambient Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -77,7 +77,7 @@ const CoverageMapSection = () => {
             <span>Tamil Nadu Coverage Network</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+          <h2 className="font-extrabold tracking-tight text-white" style={{ fontSize: 'var(--text-h2)' }}>
             Serving Top Cities in Tamil Nadu
           </h2>
 
@@ -90,7 +90,7 @@ const CoverageMapSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-slate-800/60 border border-slate-700/80 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-10">
           
           {/* LEFT: Interactive Stylized Map Viewport */}
-          <div className="lg:col-span-7 relative h-72 sm:h-96 w-full rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950/60 border border-slate-700/60 overflow-hidden p-6 flex flex-col justify-between">
+          <div className="lg:col-span-7 relative w-full rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950/60 border border-slate-700/60 overflow-hidden p-6 flex flex-col justify-between" style={{ height: 'clamp(260px, 30vw, 400px)' }}>
             
             {/* Map Grid Pattern Overlay */}
             <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-60" />

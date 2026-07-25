@@ -5,7 +5,7 @@ const LocationMapContactSection = () => {
   return (
     <section
       id="location-map"
-      className="py-10 sm:py-14 bg-slate-50 relative overflow-hidden border-t border-slate-200"
+      className="bg-slate-50 relative overflow-hidden border-t border-slate-200" style={{ paddingTop: 'var(--space-section)', paddingBottom: 'var(--space-section)' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* LIGHT MAP CONTAINER WITH EMBEDDED MAP */}
@@ -38,9 +38,9 @@ const LocationMapContactSection = () => {
         </div>
 
         {/* BELOW MAP: LARGE BOLD CONTACT & LOCATION DETAILS */}
-        <div className="relative bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10">
+        <div className="relative bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
           {/* LEFT COLUMN: BRAND LOGO & TAGLINE */}
-          <div className="lg:w-5/12 space-y-3 text-left border-b lg:border-b-0 lg:border-r border-slate-100 pb-6 lg:pb-0 lg:pr-8 w-full">
+          <div className="md:w-5/12 space-y-3 text-left border-b md:border-b-0 md:border-r border-slate-100 pb-6 md:pb-0 md:pr-8 w-full">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-teal-600 text-white flex items-center justify-center shadow-md">
                 <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -61,7 +61,7 @@ const LocationMapContactSection = () => {
           </div>
 
           {/* RIGHT COLUMN: CONTACT & ADDRESS */}
-          <div className="lg:w-6/12 space-y-4 text-left w-full">
+          <div className="md:w-6/12 space-y-4 text-left w-full">
             {/* PHONE NUMBERS */}
             <div className="flex items-start space-x-3.5">
               <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200 mt-0.5">

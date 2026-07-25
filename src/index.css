@@ -5,20 +5,30 @@
 @layer base {
   :root {
     /* 60-30-10 Color Palette Tokens */
-    --color-bg-primary: #f8fafc; /* 60%: Slate 50 Neutral Light */
-    --color-bg-secondary: #f0fdfa; /* 60%: Soft Mint/Teal tint */
-    --color-surface-card: #ffffff; /* 60%: Pure White Card Surface */
+    --color-bg-primary: #f8fafc;
+    --color-bg-secondary: #f0fdfa;
+    --color-surface-card: #ffffff;
 
-    --color-text-main: #0f172a; /* 30%: Slate 900 Heading/Primary text */
-    --color-text-muted: #475569; /* 30%: Slate 600 Body text */
-    --color-border-subtle: #e2e8f0; /* 30%: Subtle slate border */
-    --color-medical-teal: #0f766e; /* 30%: Deep Medical Teal */
-    --color-medical-dark: #0f172a; /* 30%: Deep Clinical Navy */
+    --color-text-main: #0f172a;
+    --color-text-muted: #475569;
+    --color-border-subtle: #e2e8f0;
+    --color-medical-teal: #0f766e;
+    --color-medical-dark: #0f172a;
 
-    --color-accent-teal: #0d9488; /* 10%: Active Teal CTA Glow */
-    --color-accent-sky: #0284c7; /* 10%: Medical Cyan Accent */
-    --color-accent-emerald: #10b981; /* 10%: Success/Available Pulse Green */
-    --color-accent-coral: #f43f5e; /* 10%: Emergency badge */
+    --color-accent-teal: #0d9488;
+    --color-accent-sky: #0284c7;
+    --color-accent-emerald: #10b981;
+    --color-accent-coral: #f43f5e;
+
+    /* Fluid typography — scales continuously with viewport */
+    --text-hero:     clamp(1.85rem, 3.2vw + 0.5rem, 3.5rem);   /* 30px → 56px */
+    --text-h2:       clamp(1.35rem, 2vw + 0.5rem, 2.25rem);   /* 22px → 36px */
+    --text-body:     clamp(0.875rem, 0.8vw + 0.3rem, 1.05rem); /* 14px → 17px */
+    --text-sm:       clamp(0.75rem, 0.5vw + 0.25rem, 0.875rem);
+
+    /* Fluid section spacing */
+    --space-section: clamp(2.5rem, 5vw, 6rem);
+    --space-inner:   clamp(1rem, 3vw, 2.5rem);
   }
 
   body {

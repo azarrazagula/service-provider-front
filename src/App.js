@@ -3,6 +3,7 @@ import Navbar from "./components/common/Navbar";
 import HeroSection from "./components/home/HeroSection";
 import TrustBadge from "./components/home/TrustBadge";
 import SelectServiceSection from "./components/home/SelectServiceSection";
+import HowItWorksSection from "./components/home/HowItWorksSection";
 import LocationMapContactSection from "./components/home/LocationMapContactSection";
 import Footer from "./components/common/Footer";
 import AuthModal from "./components/auth/AuthModal";
@@ -80,6 +81,15 @@ function App() {
 
         {/* Section 2: Which service do you want? (Doctor, Electrician, Plumber) */}
         <SelectServiceSection onSelectCategory={handleSelectCategory} />
+
+        {/* Section 3: How It Works & CTA Banner */}
+        <HowItWorksSection
+          onOpenLogin={() => setIsAuthModalOpen(true)}
+          onExploreServices={() => {
+            const el = document.getElementById("select-service");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
 
         {/* Section 4: Location Map & Large Contact Section */}
         <LocationMapContactSection />

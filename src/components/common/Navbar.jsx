@@ -1,83 +1,111 @@
-import React, { useState } from 'react';
-import { User, Menu, X, LogOut } from './Icons';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, LogOut } from './Icons';
+import { gsap } from 'gsap';
+
+// Style constants (defined outside component — no re-creation on render)
+const FLIP_INNER_STYLE = { transformStyle: 'preserve-3d', position: 'relative', width: '100%', height: '100%' };
+const FRONT_FACE_STYLE = { backfaceVisibility: 'hidden' };
+const BACK_FACE_STYLE  = { backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' };
+const FILL_STYLE = { position: 'absolute', inset: 0, backgroundColor: '#4f46e5', transformOrigin: 'top', transform: 'scaleY(0)', zIndex: 0 };
 
 const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const flipWrapRef  = useRef(null);
+  const flipInnerRef = useRef(null);
+  const mobileBtnRef = useRef(null);
+  const mobileFillRef = useRef(null);
+  const isTouching = useRef(false);
+
+  // Desktop login btn: mount slide-in
+  useEffect(() => {
+    const el = flipWrapRef.current;
+    if (!el) return;
+    gsap.fromTo(el, { opacity: 0, x: 40, scale: 0.85 }, { opacity: 1, x: 0, scale: 1, duration: 0.65, delay: 0.3, ease: 'back.out(1.7)' });
+  }, []);
+
+  // Desktop flip handlers
+  const handleFlipEnter = () => gsap.to(flipInnerRef.current, { rotateY: 180, duration: 0.45, ease: 'power2.inOut' });
+  const handleFlipLeave = () => gsap.to(flipInnerRef.current, { rotateY: 0,   duration: 0.45, ease: 'power2.inOut' });
+  const handleLoginClick = () => {
+    gsap.timeline()
+      .to(flipWrapRef.current, { scale: 0.9, duration: 0.1, ease: 'power2.in' })
+      .to(flipWrapRef.current, { scale: 1,   duration: 0.25, ease: 'back.out(2)' });
+    onOpenLogin();
+  };
+
+  // Mobile fill-sweep handlers
+  const handleMobileHoverEnter = () => {
+    if (isTouching.current) return;
+    gsap.to(mobileFillRef.current, { scaleY: 1, duration: 0.38, ease: 'power2.inOut' });
+  };
+  const handleMobileHoverLeave = () =>
+    gsap.to(mobileFillRef.current, { scaleY: 0, duration: 0.3, ease: 'power2.inOut' });
+
+  // Mobile touch feedback
+  const handleMobileTouchStart = () => {
+    isTouching.current = true;
+    gsap.to(mobileBtnRef.current, { scale: 0.96, duration: 0.1, ease: 'power2.in' });
+  };
+  const handleMobileTouchEnd = () => {
+    gsap.to(mobileBtnRef.current, { scale: 1, duration: 0.2, ease: 'back.out(2)' });
+    gsap.to(mobileFillRef.current, { scaleY: 0, duration: 0.2, ease: 'power2.out' });
+    setTimeout(() => { isTouching.current = false; }, 500);
+  };
 
   return (
     <header className="sticky top-0 z-50 glass-nav shadow-sm">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-16">
         <div className="flex items-center justify-between h-20">
 
-          {/* LEFT SIDE: Brand Logo / Service Name */}
+          {/* Brand */}
           <div className="flex items-center space-x-3 cursor-pointer group">
-
-            <div>
-              <span className="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-teal-700 transition-colors">
-                Service Provider
-              </span>
-
-            </div>
+            <span className="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-teal-700 transition-colors">
+              Service Provider
+            </span>
           </div>
 
-          {/* CENTER: Desktop Navigation Links (Only Home) */}
+          {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center space-x-1 bg-slate-50/80 p-1.5 rounded-full border border-slate-200/80 shadow-inner">
-            <a
-              href="#home"
-              className="px-6 py-2 rounded-full text-sm font-semibold text-teal-900 bg-white shadow-sm border border-teal-100 transition-all hover:shadow"
-            >
+            <a href="#home" className="px-6 py-2 rounded-full text-sm font-semibold text-teal-900 bg-white shadow-sm border border-teal-100 transition-all hover:shadow">
               Home
             </a>
           </nav>
 
-          {/* RIGHT SIDE: Desktop Login / User Status */}
+          {/* Desktop Right: User or Flip Login */}
           <div className="hidden lg:flex items-center space-x-4">
             {currentUser ? (
               <div className="flex items-center space-x-3 bg-teal-50/80 border border-teal-200/80 pl-2 pr-3 py-1.5 rounded-full shadow-sm">
                 <div className="w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-xs uppercase shadow-sm">
-                  {currentUser.name ? currentUser.name.charAt(0) : 'U'}
+                  {currentUser.name?.charAt(0) ?? 'U'}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-slate-900 leading-tight">
-                    {currentUser.name || 'User'}
-                  </span>
-                  <span className="text-[10px] text-teal-700 font-medium">
-                    {currentUser.email}
-                  </span>
+                  <span className="text-xs font-bold text-slate-900 leading-tight">{currentUser.name || 'User'}</span>
+                  <span className="text-[10px] text-teal-700 font-medium">{currentUser.email}</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1"
-                  title="Logout"
-                  aria-label="Logout"
-                >
+                <button type="button" onClick={onLogout} className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1" title="Logout" aria-label="Logout">
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <button
-                onClick={onOpenLogin}
-                className="group flex items-center space-x-2.5 px-6 py-2.5 rounded-full bg-teal-50 border border-teal-200 hover:bg-teal-600 hover:border-teal-600 transition-all duration-300 shadow-sm"
-                aria-label="User Login"
-              >
-                <div className="w-8 h-8 rounded-full bg-teal-100 group-hover:bg-white text-teal-700 group-hover:text-teal-700 flex items-center justify-center border border-teal-300 transition-all">
-                  <User className="w-4 h-4" />
+              <div ref={flipWrapRef} onMouseEnter={handleFlipEnter} onMouseLeave={handleFlipLeave} onClick={handleLoginClick} style={{ perspective: '600px', cursor: 'pointer' }} className="relative w-36 h-11">
+                <div ref={flipInnerRef} style={FLIP_INNER_STYLE}>
+                  {/* Front */}
+                  <div style={FRONT_FACE_STYLE} className="absolute inset-0 flex items-center justify-center px-4 rounded-full bg-teal-50 border border-teal-200 shadow-sm">
+                    <span className="text-sm font-semibold text-slate-800">Login</span>
+                  </div>
+                  {/* Back */}
+                  <div style={BACK_FACE_STYLE} className="absolute inset-0 flex items-center justify-center space-x-2 px-4 rounded-full bg-teal-600 border border-teal-700 shadow-md">
+                    <span className="text-sm font-bold text-white">Sign In</span>
+                    <span className="text-white text-base font-bold">→</span>
+                  </div>
                 </div>
-                <span className="text-sm font-semibold text-slate-800 group-hover:text-white transition-colors">
-                  Login
-                </span>
-              </button>
+              </div>
             )}
           </div>
 
-          {/* MOBILE & IPAD HAMBURGER TOGGLE BUTTON */}
+          {/* Hamburger */}
           <div className="flex lg:hidden items-center">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl text-slate-700 hover:text-teal-800 hover:bg-teal-50 border border-slate-200 transition-all"
-              aria-label="Toggle navigation menu"
-            >
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2.5 rounded-xl text-slate-700 hover:text-teal-800 hover:bg-teal-50 border border-slate-200 transition-all" aria-label="Toggle navigation menu">
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
@@ -85,53 +113,35 @@ const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
         </div>
       </div>
 
-      {/* MOBILE & IPAD RESPONSIVE DRAWER */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 animate-fadeIn">
-          <a
-            href="#home"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-4 py-2.5 rounded-xl font-semibold text-teal-800 bg-teal-50 text-center"
-          >
+          <a href="#home" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-2.5 rounded-xl font-semibold text-teal-800 bg-teal-50 text-center">
             Home
           </a>
-
-          {/* USER / LOGIN BUTTON INSIDE HAMBURGER DRAWER */}
           <div className="pt-2">
             {currentUser ? (
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-sm uppercase">
-                    {currentUser.name ? currentUser.name.charAt(0) : 'U'}
+                    {currentUser.name?.charAt(0) ?? 'U'}
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">{currentUser.name}</p>
                     <p className="text-xs text-slate-500">{currentUser.email}</p>
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onLogout();
-                  }}
-                  className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold border border-rose-200 transition-all text-sm"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
+                <button onClick={() => { setMobileMenuOpen(false); onLogout(); }} className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold border border-rose-200 transition-all text-sm">
+                  <LogOut className="w-4 h-4" /><span>Logout</span>
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenLogin();
-                }}
-                className="w-full flex items-center justify-center space-x-2 py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-semibold shadow-md transition-all"
+              <button ref={mobileBtnRef} onMouseEnter={handleMobileHoverEnter} onMouseLeave={handleMobileHoverLeave} onTouchStart={handleMobileTouchStart} onTouchEnd={handleMobileTouchEnd}
+                onClick={() => { setMobileMenuOpen(false); onOpenLogin(); }}
+                className="relative w-full overflow-hidden flex items-center justify-center py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-md"
               >
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <User className="w-3.5 h-3.5" />
-                </div>
-                <span>Login</span>
+                <div ref={mobileFillRef} style={FILL_STYLE} />
+                <span style={{ position: 'relative', zIndex: 1 }}>Login</span>
               </button>
             )}
           </div>
@@ -142,4 +152,3 @@ const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
 };
 
 export default Navbar;
-

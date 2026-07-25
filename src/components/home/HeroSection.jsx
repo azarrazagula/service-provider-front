@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Calendar, ArrowRight, CheckCircle2 } from "../common/Icons";
+import { gsap } from "gsap";
 
-// Doctor Images
 import cardiologistImg from "../../assets/Cardiologist (Heart).webp";
 import dentalImg from "../../assets/Dental.webp";
 import dietitianImg from "../../assets/Dietitian : Nutritionist.webp";
 import physioImg from "../../assets/Physiotherapist.webp";
 import surgeonImg from "../../assets/Surgeon.webp";
-
-// Electrician Images
 import electricianImg from "../../assets/Ecltric.webp";
-
-// Plumber Images
 import plumberImg from "../../assets/Plumbers.webp";
 
 const doctorSlides = [
@@ -22,6 +18,12 @@ const doctorSlides = [
     badge: "Heart Care",
     category: "Doctor",
     image: cardiologistImg,
+    headingHighlight: "Certified Heart Specialists.",
+    headingMain: "We Are Here For Your Healthcare Future",
+    description: "Our dedicated platform connects you with top-tier medical specialists, providing instant video consultations, home health visits, and expert prescriptions with absolute privacy and care.",
+    quote1: "\"A true companion to life-saving hands,\"",
+    quote2: "\"A guiding support to healing doctors and caring patients.\"",
+    features: ["100% Verified", "Instant Audio Call", "HD Video Call", "Encrypted Records"],
   },
   {
     id: 6,
@@ -30,6 +32,12 @@ const doctorSlides = [
     badge: "Electrical",
     category: "Technician",
     image: electricianImg,
+    headingHighlight: "Certified Master Electricians.",
+    headingMain: "Safe & Reliable Home Wiring Repairs",
+    description: "Book verified electricians in minutes for emergency short-circuits, home rewiring, appliance installation, and safety inspections with guaranteed quality.",
+    quote1: "\"Powering your homes safely and efficiently,\"",
+    quote2: "\"Expert electrical solutions at your doorstep in 30 minutes.\"",
+    features: ["30-Min Arrival", "Background Verified", "Upfront Pricing", "100% Safe Work"],
   },
   {
     id: 2,
@@ -38,6 +46,12 @@ const doctorSlides = [
     badge: "Dental Care",
     category: "Doctor",
     image: dentalImg,
+    headingHighlight: "Expert Dental Specialists.",
+    headingMain: "Pain-Free Oral Care & Smile Design",
+    description: "Get instant consultation for tooth pain, cosmetic smile design, root canals, and pediatric dentistry from licensed, top-rated dental professionals.",
+    quote1: "\"A healthy smile reflects a healthy life,\"",
+    quote2: "\"Gentle dental care tailored for your entire family.\"",
+    features: ["Licensed Dentists", "Teeth Cleaning", "Root Canal Experts", "Instant Booking"],
   },
   {
     id: 7,
@@ -46,6 +60,12 @@ const doctorSlides = [
     badge: "Plumbing",
     category: "Technician",
     image: plumberImg,
+    headingHighlight: "Master Plumber Experts.",
+    headingMain: "Fast Pipe Leak Repair & Installation",
+    description: "Experienced plumbers ready for pipe leaks, bathroom fitting, clog removal, and drain cleaning with specialized tools and transparent pricing.",
+    quote1: "\"Flowing comfort for every household,\"",
+    quote2: "\"Prompt, clean, and reliable plumbing services on demand.\"",
+    features: ["Leak Detection", "Pipe Installation", "Clog Removal", "Guaranteed Work"],
   },
   {
     id: 3,
@@ -54,6 +74,12 @@ const doctorSlides = [
     badge: "Nutrition Care",
     category: "Doctor",
     image: dietitianImg,
+    headingHighlight: "Certified Dietitians.",
+    headingMain: "Personalized Diet Plans for Healthy Living",
+    description: "Achieve your health goals with custom meal plans for weight management, diabetes control, PCOS, and sports nutrition guided by expert dietitians.",
+    quote1: "\"Nourishing your body with science-backed care,\"",
+    quote2: "\"Empowering your wellness journey with customized nutrition.\"",
+    features: ["Custom Meal Plans", "Weight Control", "Diabetic Diets", "1-on-1 Coaching"],
   },
   {
     id: 4,
@@ -62,6 +88,12 @@ const doctorSlides = [
     badge: "Physiotherapy",
     category: "Doctor",
     image: physioImg,
+    headingHighlight: "Expert Physiotherapists.",
+    headingMain: "Rehabilitation & Joint Pain Relief",
+    description: "Restore your mobility and relieve chronic back, neck, or joint pain with personalized physiotherapeutic care at home or online.",
+    quote1: "\"A true companion to life-saving hands,\"",
+    quote2: "\"A guiding support to healing doctors and caring patients.\"",
+    features: ["Home Rehab Visits", "Posture Correction", "Joint Pain Relief", "Certified Pros"],
   },
   {
     id: 5,
@@ -70,152 +102,159 @@ const doctorSlides = [
     badge: "Surgery Expert",
     category: "Doctor",
     image: surgeonImg,
+    headingHighlight: "Senior Surgical Experts.",
+    headingMain: "Laparoscopic & General Surgery Advice",
+    description: "Consult with leading general and laparoscopic surgeons for pre-surgery guidance, second opinions, and post-operative recovery care.",
+    quote1: "\"Precision, expertise, and ultimate patient safety,\"",
+    quote2: "\"Guiding you through every step of surgical care.\"",
+    features: ["Second Opinions", "Laparoscopic Guidance", "Post-Op Recovery", "Top Specialists"],
   },
 ];
 
 const HeroSection = ({ onOpenLogin, onExploreServices }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const animatedContentRef = useRef(null);
 
-  // Auto slide from right to left every 3.5 seconds - cycles through all mixed services
+  // Cycle slides automatically every 4 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % doctorSlides.length);
-    }, 3500);
+      setCurrentIndex((prev) => (prev + 1) % doctorSlides.length);
+    }, 4000);
     return () => clearInterval(timer);
   }, []);
 
+  // GSAP animation ONLY on text content when slide changes (buttons excluded)
+  useEffect(() => {
+    if (animatedContentRef.current) {
+      gsap.fromTo(
+        animatedContentRef.current.children,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.05, ease: "power2.out" }
+      );
+    }
+  }, [currentIndex]);
+
+  const currentSlide = doctorSlides[currentIndex];
+
+  const renderSlider = () => (
+    <div className="relative mx-auto max-w-lg lg:max-w-none space-y-4 w-full">
+      {/* Carousel Viewport Container */}
+      <div className="relative overflow-hidden rounded-3xl shadow-2xl border border-slate-200/80 bg-slate-100 h-72 sm:h-[380px] lg:h-[460px]">
+        <div
+          className="flex h-full transition-transform duration-700 ease-in-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {doctorSlides.map((slide) => (
+            <div key={slide.id} className="min-w-full h-full relative shrink-0">
+              <img src={slide.image} alt={slide.name} className="w-full h-full object-cover object-top" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Info Box */}
+      <div className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-md transition-all duration-300">
+        <div className="flex items-center justify-between">
+          <h4 className="text-base font-bold text-slate-900 leading-snug">
+            {currentSlide.name}
+          </h4>
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-teal-100 text-teal-800 border border-teal-200 uppercase tracking-wider shrink-0 ml-2">
+            {currentSlide.badge}
+          </span>
+        </div>
+        <p className="text-xs text-slate-500 font-medium truncate pt-1">
+          {currentSlide.title}
+        </p>
+      </div>
+    </div>
+  );
+
   return (
-    <section
-      id="home"
-      className="relative py-12 lg:py-24 2xl:py-14 overflow-hidden bg-medical-mesh"
-    >
-      {/* Ambient background glows */}
+    <section id="home" className="relative overflow-hidden bg-medical-mesh" style={{ paddingTop: 'var(--space-section)', paddingBottom: 'var(--space-section)' }}>
+      {/* Ambient glows */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-teal-200/25 rounded-full blur-3xl -z-10 pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-sky-200/30 rounded-full blur-3xl -z-10 pointer-events-none" />
 
-      {/* Spacious Max Width Container */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* LEFT SIDE: Airy, Spacious Text Content */}
-          <div className="lg:col-span-7 space-y-7 text-left">
-            {/* Top Live Pill Badge */}
-            <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-teal-50/90 border border-teal-200/80 text-teal-800 text-xs sm:text-sm font-semibold shadow-sm">
-              <span className="flex h-2.5 w-2.5 relative">
-                <span className="pulse-live absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-600"></span>
-              </span>
-              <span>24/7 Verified Audio & Video Consultations</span>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
 
-            {/* Main Hero Title */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
-              Trust Certified Doctors.{" "}
-              <span className="text-gradient-teal">
-                We Are Here For Your Healthcare Future
-              </span>
-            </h1>
+          {/* LEFT COLUMN */}
+          <div className="lg:col-span-7 space-y-6 text-left w-full">
+            
+            {/* ANIMATED CONTENT WRAPPER (Heading, Paragraph, Quote, Mobile Slider, Features) */}
+            <div ref={animatedContentRef} className="space-y-6">
+              {/* Live Badge (Hidden on mobile & iPad, visible on desktop lg+) */}
+              <div className="hidden lg:inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-teal-50/90 border border-teal-200/80 text-teal-800 font-semibold shadow-sm" style={{ fontSize: 'var(--text-sm)' }}>
+                <span className="flex h-2.5 w-2.5 relative">
+                  <span className="pulse-live absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-600" />
+                </span>
+                <span>24/7 Verified Audio & Video Consultations</span>
+              </div>
 
-            {/* Clean Spacious Paragraph */}
-            <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl">
-              Our dedicated platform connects you with top-tier medical
-              specialists, providing instant video consultations, home health
-              visits, and expert prescriptions with absolute privacy and care.
-            </p>
+              {/* Hero Heading */}
+              <h1 className="font-extrabold tracking-tight text-slate-900 leading-[1.15]" style={{ fontSize: 'var(--text-hero)' }}>
+                {currentSlide.headingHighlight}{" "}
+                <span className="text-gradient-teal">{currentSlide.headingMain}</span>
+              </h1>
 
-            {/* 2-Line Poetic Quote */}
-            <div className="pl-5 border-l-4 border-teal-600 space-y-1.5 py-1">
-              <p className="text-base sm:text-lg lg:text-xl font-serif italic text-teal-950 font-medium tracking-wide">
-                "A true companion to life-saving hands,"
+              {/* Body text */}
+              <p className="text-slate-600 leading-relaxed max-w-2xl" style={{ fontSize: 'var(--text-body)' }}>
+                {currentSlide.description}
               </p>
-              <p className="text-base sm:text-lg lg:text-xl font-serif italic text-teal-900 font-medium tracking-wide">
-                "A guiding support to healing doctors and caring patients."
-              </p>
+
+              {/* Quote */}
+              <div className="pl-5 border-l-4 border-teal-600 space-y-1.5 py-1">
+                <p className="font-serif italic text-teal-950 font-medium tracking-wide" style={{ fontSize: 'var(--text-body)' }}>
+                  {currentSlide.quote1}
+                </p>
+                <p className="font-serif italic text-teal-900 font-medium tracking-wide" style={{ fontSize: 'var(--text-body)' }}>
+                  {currentSlide.quote2}
+                </p>
+              </div>
+
+              {/* SLIDE IMAGE CAROUSEL FOR MOBILE & IPAD (Visible < lg, placed right ABOVE feature badges) */}
+              <div className="block lg:hidden my-6">
+                {renderSlider()}
+              </div>
+
+              {/* Feature Bullets */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
+                {currentSlide.features.map((f) => (
+                  <div key={f} className="flex items-center space-x-2 font-semibold text-slate-700 whitespace-nowrap" style={{ fontSize: 'var(--text-sm)' }}>
+                    <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Key Feature Checkmark Bullets (Clean Horizontal Row, No Wrapping) */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
-              <div className="flex items-center space-x-2 text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap">
-                <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                <span>100% Verified </span>
-              </div>
-              <div className="flex items-center space-x-2 text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap">
-                <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                <span>Instant Audio Call</span>
-              </div>
-              <div className="flex items-center space-x-2 text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap">
-                <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                <span>HD Video Call</span>
-              </div>
-              <div className="flex items-center space-x-2 text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap">
-                <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-                <span>Encrypted Records</span>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4 w-full">
+            {/* STATIC CTA BUTTONS — OUTSIDE ANIMATION WRAPPER (Never re-animates on slide change) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4 pt-2 w-full">
               <button
                 onClick={onOpenLogin}
-                className="px-8 py-4 rounded-full bg-teal-700 hover:bg-teal-800 text-white font-semibold shadow-lg shadow-teal-700/20 hover:shadow-teal-700/30 transition-all duration-300 flex items-center justify-center space-x-2.5 text-base w-full sm:w-auto"
+                className="px-7 py-3.5 rounded-full bg-teal-700 hover:bg-teal-800 text-white font-semibold shadow-lg shadow-teal-700/20 transition-all duration-300 flex items-center justify-center space-x-2.5 text-base whitespace-nowrap"
               >
-                <Calendar className="w-5 h-5" />
-                <span>Book Appointment</span>
-                <ArrowRight className="w-4 h-4" />
+                <Calendar className="w-5 h-5 shrink-0" />
+                <span className="whitespace-nowrap">Book Appointment</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </button>
-
               <a
                 href="#select-service"
                 onClick={onExploreServices}
-                className="px-7 py-4 rounded-full bg-white hover:bg-teal-50 border border-slate-300 hover:border-teal-300 text-slate-800 hover:text-teal-800 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 text-base shadow-sm w-full sm:w-auto text-center"
+                className="px-7 py-3.5 rounded-full bg-white hover:bg-teal-50 border border-slate-300 hover:border-teal-300 text-slate-800 hover:text-teal-800 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 text-base shadow-sm text-center whitespace-nowrap"
               >
-                <span>Explore All Services</span>
+                <span className="whitespace-nowrap">Explore All Services</span>
               </a>
             </div>
+
           </div>
 
-          {/* RIGHT SIDE: Completely Unblocked Doctor Image Slider */}
-          <div className="lg:col-span-5 relative mt-8 lg:mt-0">
-            <div className="relative mx-auto max-w-lg lg:max-w-none space-y-4">
-              {/* Carousel Viewport Container (Image is 100% Unblocked & Visible) */}
-              <div className="relative h-80 sm:h-96 lg:h-[460px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-100">
-                {/* Sliding Track (Right to Left Animation) */}
-                <div
-                  className="flex h-full transition-transform duration-700 ease-in-out"
-                  style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-                >
-                  {doctorSlides.map((slide) => (
-                    <div
-                      key={slide.id}
-                      className="min-w-full h-full relative shrink-0"
-                    >
-                      <img
-                        src={slide.image}
-                        alt={slide.name}
-                        className="w-full h-full object-cover object-top"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Doctor Specialty Information Box (Strictly 2 Lines) */}
-              <div className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-md transition-all duration-300">
-                {/* Line 1: Name & Badge */}
-                <div className="flex items-center justify-between">
-                  <h4 className="text-base font-bold text-slate-900 leading-snug">
-                    {doctorSlides[currentIndex].name}
-                  </h4>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 border border-teal-200 uppercase tracking-wider shrink-0 ml-2">
-                    {doctorSlides[currentIndex].badge}
-                  </span>
-                </div>
-                {/* Line 2: Title Description */}
-                <p className="text-xs text-slate-500 font-medium truncate pt-1">
-                  {doctorSlides[currentIndex].title}
-                </p>
-              </div>
-            </div>
+          {/* RIGHT COLUMN: SLIDE IMAGE CAROUSEL FOR DESKTOP (Visible >= lg) */}
+          <div className="hidden lg:block lg:col-span-5">
+            {renderSlider()}
           </div>
+
         </div>
       </div>
     </section>

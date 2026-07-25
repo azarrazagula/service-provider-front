@@ -179,7 +179,7 @@ const OtpVerificationForm = ({ email: initialEmail, onSuccess, onBackToLogin }) 
 
       {/* 6-DIGIT OTP INPUTS */}
       <div>
-        <label className="block text-xs font-bold text-slate-700 mb-2.5 text-center flex items-center justify-center space-x-1.5">
+        <label className="flex text-xs font-bold text-slate-700 mb-2.5 text-center items-center justify-center space-x-1.5">
           <Key className="w-4 h-4 text-teal-600" />
           <span>Enter 6-Digit OTP Code</span>
         </label>
