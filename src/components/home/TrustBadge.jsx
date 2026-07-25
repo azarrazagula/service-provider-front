@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ShieldCheck, Lock, PhoneCall } from "./common/Icons";
+import { gsap } from "gsap";
 
 const TrustBadge = () => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current && containerRef.current.children) {
+      gsap.fromTo(
+        containerRef.current.children,
+        { opacity: 0, y: 15, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.75, stagger: 0.12, ease: "power2.out", delay: 0.2 }
+      );
+    }
+  }, []);
+
   const trustItems = [
     {
       id: 1,
@@ -23,7 +36,7 @@ const TrustBadge = () => {
   return (
     <div className="w-full bg-[#0b2b40] border-y border-[#143d57] py-3 sm:py-4.5 shadow-md">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-3 gap-1 sm:gap-8 items-center justify-between text-center">
+        <div ref={containerRef} className="grid grid-cols-3 gap-1 sm:gap-8 items-center justify-between text-center">
           {trustItems.map((item) => {
             const Icon = item.icon;
             return (

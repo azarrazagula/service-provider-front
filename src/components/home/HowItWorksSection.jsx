@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 
 const HowItWorksSection = ({ onOpenLogin, onExploreServices }) => {
+  const ctaContentRef = useRef(null);
+
+  useEffect(() => {
+    if (ctaContentRef.current && ctaContentRef.current.children) {
+      gsap.fromTo(
+        ctaContentRef.current.children,
+        { opacity: 0, y: 25, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.12, ease: "power2.out" }
+      );
+    }
+  }, []);
+
   return (
     <section className="bg-white pt-6 sm:pt-12">
       {/* CTA BANNER ("Ready to get things done?") */}
@@ -8,7 +21,7 @@ const HowItWorksSection = ({ onOpenLogin, onExploreServices }) => {
         {/* Background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-6 relative z-10">
+        <div ref={ctaContentRef} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-6 relative z-10">
           <h3 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
             Ready to get things done?
           </h3>

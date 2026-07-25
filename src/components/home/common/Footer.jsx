@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 
 const Footer = () => {
+  const footerContentRef = useRef(null);
+
+  useEffect(() => {
+    if (footerContentRef.current && footerContentRef.current.children) {
+      gsap.fromTo(
+        footerContentRef.current.children,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.85, stagger: 0.12, ease: "power2.out" }
+      );
+    }
+  }, []);
+
   return (
     <footer className="bg-white border-t border-slate-200 text-slate-600 py-8 sm:py-12 lg:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div ref={footerContentRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 lg:gap-12">
 
           {/* LEFT COLUMN: Brand Name & Tagline */}

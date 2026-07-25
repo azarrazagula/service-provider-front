@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { CheckCircle2, ShieldCheck, Sparkles, Users } from "./common/Icons";
 
@@ -88,6 +88,40 @@ const TestimonialsSection = () => {
   const cardRef = useRef(null);
   const isAnimating = useRef(false);
   const touchStartX = useRef(0);
+  const sectionHeaderRef = useRef(null);
+  const desktopGridRef = useRef(null);
+  const ratingSummaryRef = useRef(null);
+
+  // GSAP Section Entrance Timeline
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { duration: 0.85, ease: "power2.out" } });
+
+    if (sectionHeaderRef.current && sectionHeaderRef.current.children) {
+      tl.fromTo(
+        sectionHeaderRef.current.children,
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, stagger: 0.12 }
+      );
+    }
+
+    if (desktopGridRef.current && desktopGridRef.current.children) {
+      tl.fromTo(
+        desktopGridRef.current.children,
+        { opacity: 0, y: 35, scale: 0.94 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.12, ease: "back.out(1.3)" },
+        "-=0.4"
+      );
+    }
+
+    if (ratingSummaryRef.current) {
+      tl.fromTo(
+        ratingSummaryRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.7 },
+        "-=0.3"
+      );
+    }
+  }, []);
 
   // GSAP 3D Touch Swipe Animation for Mobile
   const animateTestimonialSlide = (newIndex, direction) => {
@@ -176,7 +210,7 @@ const TestimonialsSection = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* SECTION HEADER */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-10 sm:mb-16">
+        <div ref={sectionHeaderRef} className="text-center max-w-3xl mx-auto space-y-3 mb-10 sm:mb-16">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-teal-100/80 border border-teal-200 text-teal-800 text-xs font-bold uppercase tracking-wider shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-teal-600" />
             <span>Real User Feedback & Ratings</span>
@@ -188,10 +222,8 @@ const TestimonialsSection = () => {
           >
             Loved by Thousands Across Tamil Nadu
           </h2>
-
-          <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
-            Read real stories from verified patients & homeowners who trust our
-            doorstep specialists & digital medical consultations.
+          <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
+            Read verified reviews from customers and patients who booked certified doctors and top-rated local experts.
           </p>
         </div>
 
@@ -277,8 +309,8 @@ const TestimonialsSection = () => {
           </div>
         </div>
 
-        {/* --- DESKTOP / TABLET VIEW: 6 CARDS GRID (>= md) --- */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        {/* DESKTOP GRID VIEW (>= md) */}
+        <div ref={desktopGridRef} className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {testimonialsData.map((item) => (
             <div
               key={item.id}
@@ -333,7 +365,7 @@ const TestimonialsSection = () => {
         </div>
 
         {/* BOTTOM STAT SUMMARY BAR — Single Row on Mobile & iPad/Desktop */}
-        <div className="mt-6 sm:mt-14 bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-6 border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-1.5 sm:gap-4 text-left">
+        <div ref={ratingSummaryRef} className="mt-6 sm:mt-14 bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-6 border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-1.5 sm:gap-4 text-left">
           {/* Box 1: Star Rating */}
           <div className="flex items-center space-x-1.5 sm:space-x-3 flex-1 justify-center sm:justify-start">
             <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center text-xs sm:text-xl font-bold shrink-0">

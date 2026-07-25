@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { mainCategories } from "./data/serviceCategories";
 import { Sparkles } from "./common/Icons";
@@ -13,6 +13,30 @@ const SelectServiceSection = ({ onSelectCategory }) => {
   const btnRef = useRef(null);
   const isAnimating = useRef(false);
   const touchStartX = useRef(0);
+  const sectionHeaderRef = useRef(null);
+  const desktopGridRef = useRef(null);
+
+  // GSAP Section Entrance Timeline
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { duration: 0.8, ease: "power2.out" } });
+
+    if (sectionHeaderRef.current && sectionHeaderRef.current.children) {
+      tl.fromTo(
+        sectionHeaderRef.current.children,
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, stagger: 0.12 }
+      );
+    }
+
+    if (desktopGridRef.current && desktopGridRef.current.children) {
+      tl.fromTo(
+        desktopGridRef.current.children,
+        { opacity: 0, y: 35, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.15, ease: "back.out(1.3)" },
+        "-=0.4"
+      );
+    }
+  }, []);
 
   // Ultra-Premium GSAP 3D Slide & Parallax Stagger Animation
   const animateSlide = (newIndex, direction) => {
@@ -133,21 +157,18 @@ const SelectServiceSection = ({ onSelectCategory }) => {
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center space-y-3">
+        <div ref={sectionHeaderRef} className="mx-auto max-w-3xl text-center space-y-3">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-teal-100/80 border border-teal-200 text-teal-800 text-xs font-bold uppercase tracking-wider shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-teal-600" />
             <span>Choose Your Service</span>
           </div>
 
-          <h2
-            className="font-extrabold tracking-tight text-slate-900"
-            style={{ fontSize: "var(--text-h2)" }}
-          >
-            Book a trusted provider in minutes.
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Book Trusted Experts In Seconds
           </h2>
-          <p className="text-sm leading-6 text-slate-600 sm:text-base max-w-xl mx-auto">
-            Pick one of our top service categories and see vetted professionals
-            ready to help near you.
+
+          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">
+            Swipe through our most requested professional services with upfront pricing, verified credentials, and instant scheduling.
           </p>
         </div>
 
@@ -245,7 +266,7 @@ const SelectServiceSection = ({ onSelectCategory }) => {
         </div>
 
         {/* --- DESKTOP VIEW GRID (>= lg) --- */}
-        <div className="hidden lg:grid mt-12 gap-8 lg:grid-cols-3">
+        <div ref={desktopGridRef} className="hidden lg:grid mt-12 gap-8 lg:grid-cols-3">
           {mainCategories.map((category) => (
             <button
               key={category.id}
