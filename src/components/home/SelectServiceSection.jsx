@@ -233,11 +233,10 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                   key={idx}
                   type="button"
                   onClick={() => handleSelectTab(idx)}
-                  className={`h-2.5 rounded-full transition-all duration-400 ${
-                    activeIndex === idx
-                      ? "w-8 bg-teal-700 shadow-xs"
-                      : "w-2.5 bg-slate-300 hover:bg-slate-400"
-                  }`}
+                  className={`h-2.5 rounded-full transition-all duration-400 ${activeIndex === idx
+                    ? "w-8 bg-teal-700 shadow-xs"
+                    : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                    }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}

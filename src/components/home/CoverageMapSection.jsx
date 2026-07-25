@@ -64,12 +64,12 @@ const CoverageMapSection = () => {
 
   return (
     <section id="coverage-map" className="bg-slate-900 text-white relative overflow-hidden border-t border-slate-800" style={{ paddingTop: 'var(--space-section)', paddingBottom: 'var(--space-section)' }}>
-      
+
       {/* Background Ambient Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* SECTION HEADER */}
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-10 sm:mb-12">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-teal-950/80 border border-teal-500/30 text-teal-300 text-xs font-bold uppercase tracking-wider shadow-sm">
@@ -88,10 +88,10 @@ const CoverageMapSection = () => {
 
         {/* MAP VISUAL & CITY DETAILS CONTAINER */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-slate-800/60 border border-slate-700/80 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-10">
-          
+
           {/* LEFT: Interactive Stylized Map Viewport */}
           <div className="lg:col-span-7 relative w-full rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950/60 border border-slate-700/60 overflow-hidden p-6 flex flex-col justify-between" style={{ height: 'clamp(260px, 30vw, 400px)' }}>
-            
+
             {/* Map Grid Pattern Overlay */}
             <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-60" />
 
@@ -121,25 +121,22 @@ const CoverageMapSection = () => {
                   >
                     {/* Pulsing ring */}
                     <div className={`relative flex items-center justify-center`}>
-                      <span className={`absolute inline-flex h-8 w-8 rounded-full ${
-                        isActive ? 'bg-teal-400 opacity-75 animate-ping' : 'bg-slate-500/40'
-                      }`} />
-                      
+                      <span className={`absolute inline-flex h-8 w-8 rounded-full ${isActive ? 'bg-teal-400 opacity-75 animate-ping' : 'bg-slate-500/40'
+                        }`} />
+
                       {/* Pin Circle */}
-                      <div className={`relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                        isActive
-                          ? 'bg-teal-500 text-slate-950 ring-4 ring-teal-400/30 scale-110 shadow-lg'
-                          : 'bg-slate-800 text-slate-300 border border-slate-600 hover:bg-teal-600 hover:text-white'
-                      }`}>
+                      <div className={`relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isActive
+                        ? 'bg-teal-500 text-slate-950 ring-4 ring-teal-400/30 scale-110 shadow-lg'
+                        : 'bg-slate-800 text-slate-300 border border-slate-600 hover:bg-teal-600 hover:text-white'
+                        }`}>
                         <MapPin className="w-4 h-4" />
                       </div>
 
                       {/* City Name Tooltip on Node */}
-                      <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition-all shadow-md ${
-                        isActive
-                          ? 'bg-teal-600 text-white border border-teal-400 opacity-100 scale-100'
-                          : 'bg-slate-900 text-slate-400 border border-slate-700 opacity-80 group-hover:opacity-100'
-                      }`}>
+                      <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition-all shadow-md ${isActive
+                        ? 'bg-teal-600 text-white border border-teal-400 opacity-100 scale-100'
+                        : 'bg-slate-900 text-slate-400 border border-slate-700 opacity-80 group-hover:opacity-100'
+                        }`}>
                         {city.name}
                       </div>
                     </div>
@@ -161,7 +158,7 @@ const CoverageMapSection = () => {
 
           {/* RIGHT: Active Selected City Details Card */}
           <div className="lg:col-span-5 space-y-6 text-left">
-            
+
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">
@@ -220,11 +217,10 @@ const CoverageMapSection = () => {
                 key={city.id}
                 type="button"
                 onClick={() => setSelectedCity(city)}
-                className={`p-4 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between space-y-2 ${
-                  isSelected
-                    ? 'bg-teal-900/60 border-teal-500 ring-2 ring-teal-500/30 text-white shadow-lg -translate-y-1'
-                    : 'bg-slate-800/60 border-slate-700/80 hover:bg-slate-800 text-slate-300 hover:border-teal-400/50'
-                }`}
+                className={`p-4 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between space-y-2 ${isSelected
+                  ? 'bg-teal-900/60 border-teal-500 ring-2 ring-teal-500/30 text-white shadow-lg -translate-y-1'
+                  : 'bg-slate-800/60 border-slate-700/80 hover:bg-slate-800 text-slate-300 hover:border-teal-400/50'
+                  }`}
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center space-x-2">

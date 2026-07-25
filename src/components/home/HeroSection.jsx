@@ -180,7 +180,7 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
 
           {/* LEFT COLUMN */}
           <div className="lg:col-span-7 space-y-6 text-left w-full">
-            
+
             {/* ANIMATED CONTENT WRAPPER (Heading, Paragraph, Quote, Mobile Slider, Features) */}
             <div ref={animatedContentRef} className="space-y-6">
               {/* Live Badge (Hidden on mobile & iPad, visible on desktop lg+) */}
