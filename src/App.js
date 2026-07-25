@@ -4,7 +4,7 @@ import HeroSection from "./components/home/HeroSection";
 import TrustBadge from "./components/home/TrustBadge";
 import SelectServiceSection from "./components/home/SelectServiceSection";
 import HowItWorksSection from "./components/home/HowItWorksSection";
-import LocationMapContactSection from "./components/home/LocationMapContactSection";
+import TestimonialsSection from "./components/home/TestimonialsSection";
 import Footer from "./components/common/Footer";
 import AuthModal from "./components/auth/AuthModal";
 import { CheckCircle2, X } from "./components/common/Icons";
@@ -52,8 +52,7 @@ function App() {
           <button
             type="button"
             onClick={() => setNotification(null)}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
+            className="text-slate-400 hover:text-white transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -91,8 +90,8 @@ function App() {
           }}
         />
 
-        {/* Section 4: Location Map & Large Contact Section */}
-        <LocationMapContactSection />
+        {/* Section 4: Real User Testimonials & Reviews (6 Cards) */}
+        <TestimonialsSection />
       </main>
 
       {/* Footer */}
