@@ -2,20 +2,37 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 const HowItWorksSection = ({ onOpenLogin, onExploreServices }) => {
+  const sectionRef = useRef(null);
   const ctaContentRef = useRef(null);
 
   useEffect(() => {
-    if (ctaContentRef.current && ctaContentRef.current.children) {
-      gsap.fromTo(
-        ctaContentRef.current.children,
-        { opacity: 0, y: 25, scale: 0.97 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.12, ease: "power2.out" }
-      );
-    }
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (ctaContentRef.current && ctaContentRef.current.children) {
+              gsap.fromTo(
+                ctaContentRef.current.children,
+                { opacity: 0, y: 30, scale: 0.96 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.85, stagger: 0.14, ease: "power2.out" }
+              );
+            }
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section className="bg-white pt-6 sm:pt-12">
+    <section ref={sectionRef} className="bg-white pt-6 sm:pt-12">
       {/* CTA BANNER ("Ready to get things done?") */}
       <div className="bg-gradient-to-r from-teal-900 via-cyan-900 to-slate-900 text-white py-14 sm:py-20 text-center relative overflow-hidden shadow-inner">
         {/* Background glow */}

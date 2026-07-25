@@ -92,35 +92,54 @@ const TestimonialsSection = () => {
   const desktopGridRef = useRef(null);
   const ratingSummaryRef = useRef(null);
 
-  // GSAP Section Entrance Timeline
+  const sectionWrapperRef = useRef(null);
+
+  // GSAP On-Scroll Reveal Section Entrance Timeline
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { duration: 0.85, ease: "power2.out" } });
+    const el = sectionWrapperRef.current;
+    if (!el) return;
 
-    if (sectionHeaderRef.current && sectionHeaderRef.current.children) {
-      tl.fromTo(
-        sectionHeaderRef.current.children,
-        { opacity: 0, y: 25 },
-        { opacity: 1, y: 0, stagger: 0.12 }
-      );
-    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const tl = gsap.timeline({ defaults: { duration: 0.85, ease: "power2.out" } });
 
-    if (desktopGridRef.current && desktopGridRef.current.children) {
-      tl.fromTo(
-        desktopGridRef.current.children,
-        { opacity: 0, y: 35, scale: 0.94 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.12, ease: "back.out(1.3)" },
-        "-=0.4"
-      );
-    }
+            if (sectionHeaderRef.current && sectionHeaderRef.current.children) {
+              tl.fromTo(
+                sectionHeaderRef.current.children,
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, stagger: 0.14 }
+              );
+            }
 
-    if (ratingSummaryRef.current) {
-      tl.fromTo(
-        ratingSummaryRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.7 },
-        "-=0.3"
-      );
-    }
+            if (desktopGridRef.current && desktopGridRef.current.children) {
+              tl.fromTo(
+                desktopGridRef.current.children,
+                { opacity: 0, y: 40, scale: 0.94 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.85, stagger: 0.14, ease: "back.out(1.3)" },
+                "-=0.4"
+              );
+            }
+
+            if (ratingSummaryRef.current) {
+              tl.fromTo(
+                ratingSummaryRef.current,
+                { opacity: 0, y: 25 },
+                { opacity: 1, y: 0, duration: 0.75 },
+                "-=0.3"
+              );
+            }
+
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   // GSAP 3D Touch Swipe Animation for Mobile
@@ -198,6 +217,7 @@ const TestimonialsSection = () => {
 
   return (
     <section
+      ref={sectionWrapperRef}
       id="testimonials"
       className="bg-slate-50 relative overflow-hidden"
       style={{

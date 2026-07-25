@@ -16,26 +16,45 @@ const SelectServiceSection = ({ onSelectCategory }) => {
   const sectionHeaderRef = useRef(null);
   const desktopGridRef = useRef(null);
 
-  // GSAP Section Entrance Timeline
+  const sectionWrapperRef = useRef(null);
+
+  // GSAP On-Scroll Reveal Section Entrance Timeline
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { duration: 0.8, ease: "power2.out" } });
+    const el = sectionWrapperRef.current;
+    if (!el) return;
 
-    if (sectionHeaderRef.current && sectionHeaderRef.current.children) {
-      tl.fromTo(
-        sectionHeaderRef.current.children,
-        { opacity: 0, y: 25 },
-        { opacity: 1, y: 0, stagger: 0.12 }
-      );
-    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const tl = gsap.timeline({ defaults: { duration: 0.85, ease: "power2.out" } });
 
-    if (desktopGridRef.current && desktopGridRef.current.children) {
-      tl.fromTo(
-        desktopGridRef.current.children,
-        { opacity: 0, y: 35, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.15, ease: "back.out(1.3)" },
-        "-=0.4"
-      );
-    }
+            if (sectionHeaderRef.current && sectionHeaderRef.current.children) {
+              tl.fromTo(
+                sectionHeaderRef.current.children,
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, stagger: 0.14 }
+              );
+            }
+
+            if (desktopGridRef.current && desktopGridRef.current.children) {
+              tl.fromTo(
+                desktopGridRef.current.children,
+                { opacity: 0, y: 40, scale: 0.94 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.85, stagger: 0.15, ease: "back.out(1.3)" },
+                "-=0.4"
+              );
+            }
+
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   // Ultra-Premium GSAP 3D Slide & Parallax Stagger Animation
@@ -148,6 +167,7 @@ const SelectServiceSection = ({ onSelectCategory }) => {
 
   return (
     <section
+      ref={sectionWrapperRef}
       id="select-service"
       className="bg-slate-50 relative overflow-hidden"
       style={{
