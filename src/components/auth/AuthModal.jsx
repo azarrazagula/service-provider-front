@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, User, Sparkles, ShieldCheck } from '../home/common/Icons';
+import { gsap } from 'gsap';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import OtpVerificationForm from './OtpVerificationForm';
@@ -8,18 +9,64 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onSuccess }) => {
   const [mode, setMode] = useState(initialMode); // 'login' | 'register' | 'verify-otp'
   const [pendingEmail, setPendingEmail] = useState('');
 
+  const backdropRef = useRef(null);
+  const modalBoxRef = useRef(null);
+  const headerContentRef = useRef(null);
+
   useEffect(() => {
     setMode(initialMode);
     setPendingEmail('');
   }, [initialMode, isOpen]);
 
+  // GSAP Timeline Modal Entrance Animation
+  useEffect(() => {
+    if (isOpen) {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      if (backdropRef.current) {
+        tl.fromTo(backdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.35 });
+      }
+
+      if (modalBoxRef.current) {
+        tl.fromTo(
+          modalBoxRef.current,
+          { opacity: 0, scale: 0.86, y: 35, rotateX: -8 },
+          { opacity: 1, scale: 1, y: 0, rotateX: 0, duration: 0.5, ease: 'back.out(1.5)' },
+          '-=0.25'
+        );
+      }
+
+      if (headerContentRef.current && headerContentRef.current.children) {
+        tl.fromTo(
+          headerContentRef.current.children,
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.35, stagger: 0.06 },
+          '-=0.3'
+        );
+      }
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
+  const handleCloseModal = () => {
+    const tl = gsap.timeline({
+      onComplete: onClose,
+    });
+
+    if (modalBoxRef.current) {
+      tl.to(modalBoxRef.current, { opacity: 0, scale: 0.9, y: 20, duration: 0.25, ease: 'power2.in' });
+    }
+    if (backdropRef.current) {
+      tl.to(backdropRef.current, { opacity: 0, duration: 0.2 }, '-=0.15');
+    }
+  };
 
   const handleSuccess = (data) => {
     if (onSuccess) {
       onSuccess(data);
     }
-    onClose();
+    handleCloseModal();
   };
 
   const handleRequireOtp = ({ email }) => {
@@ -30,15 +77,20 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto style-3d-perspective">
       {/* Dynamic Backdrop Overlay with Gaussian Blur & Fade */}
       <div 
-        className="fixed inset-0 bg-slate-950/65 backdrop-blur-md transition-all duration-500 animate-fadeIn"
-        onClick={onClose}
+        ref={backdropRef}
+        className="fixed inset-0 bg-slate-950/65 backdrop-blur-md"
+        onClick={handleCloseModal}
       />
 
       {/* Animated Modal Dialog Container */}
-      <div className="relative w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden z-10 animate-scaleUp transition-all duration-300">
+      <div 
+        ref={modalBoxRef}
+        className="relative w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden z-10"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
         
         {/* Animated Gradient Decorative Header */}
         <div className="relative bg-gradient-to-br from-teal-700 via-teal-600 to-emerald-600 p-6 sm:p-7 text-white overflow-hidden">
@@ -46,43 +98,45 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onSuccess }) => {
           <div className="absolute -top-10 -right-10 w-36 h-36 bg-teal-400/30 rounded-full blur-2xl animate-pulse" />
           <div className="absolute -bottom-12 -left-8 w-32 h-32 bg-emerald-400/25 rounded-full blur-2xl animate-pulse delay-750" />
 
-          {/* Close Modal Button with Hover & Active Animation */}
+          {/* Close Modal Button */}
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleCloseModal}
             className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 active:scale-90 flex items-center justify-center text-white transition-all duration-200 border border-white/20 shadow-sm"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
 
-          {/* Header Icon with Floating Bounce Effect */}
-          <div className="relative inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-xl shadow-inner border border-white/30 mb-3 group hover:scale-105 transition-transform">
-            {mode === 'verify-otp' ? (
-              <ShieldCheck className="w-7 h-7 text-white drop-shadow-sm" />
-            ) : (
-              <User className="w-7 h-7 text-white drop-shadow-sm" />
-            )}
-            <Sparkles className="w-4 h-4 text-teal-200 absolute -top-1 -right-1 animate-spin duration-10000" />
-          </div>
+          <div ref={headerContentRef}>
+            {/* Header Icon */}
+            <div className="relative inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-xl shadow-inner border border-white/30 mb-3 group hover:scale-105 transition-transform">
+              {mode === 'verify-otp' ? (
+                <ShieldCheck className="w-7 h-7 text-white drop-shadow-sm" />
+              ) : (
+                <User className="w-7 h-7 text-white drop-shadow-sm" />
+              )}
+              <Sparkles className="w-4 h-4 text-teal-200 absolute -top-1 -right-1 animate-spin duration-10000" />
+            </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight drop-shadow-sm">
-            {mode === 'login'
-              ? 'Welcome Back!'
-              : mode === 'register'
-              ? 'Create Account'
-              : 'Verify Your Email'}
-          </h2>
-          <p className="text-teal-100 text-xs sm:text-sm mt-1.5 font-medium leading-relaxed">
-            {mode === 'login' 
-              ? 'Sign in to access your bookings & top providers' 
-              : mode === 'register'
-              ? 'Join Service Provider to book verified experts instantly'
-              : 'Enter 6-digit OTP code to complete registration'}
-          </p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight drop-shadow-sm">
+              {mode === 'login'
+                ? 'Welcome Back!'
+                : mode === 'register'
+                ? 'Create Account'
+                : 'Verify Your Email'}
+            </h2>
+            <p className="text-teal-100 text-xs sm:text-sm mt-1.5 font-medium leading-relaxed">
+              {mode === 'login' 
+                ? 'Sign in to access your bookings & top providers' 
+                : mode === 'register'
+                ? 'Join Service Provider to book verified experts instantly'
+                : 'Enter 6-digit OTP code to complete registration'}
+            </p>
+          </div>
         </div>
 
-        {/* Animated Sliding Pill Tab Switcher (Shown only for Login / Register modes) */}
+        {/* Animated Sliding Pill Tab Switcher */}
         {mode !== 'verify-otp' && (
           <div className="p-2 bg-slate-100/80 border-b border-slate-200/60">
             <div className="relative flex bg-slate-200/60 p-1 rounded-2xl">

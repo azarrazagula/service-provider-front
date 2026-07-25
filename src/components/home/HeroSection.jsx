@@ -114,6 +114,12 @@ const doctorSlides = [
 const HeroSection = ({ onOpenLogin, onExploreServices }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const animatedContentRef = useRef(null);
+  const headingRef = useRef(null);
+  const descRef = useRef(null);
+  const quotesRef = useRef(null);
+  const featuresRef = useRef(null);
+  const ctaRef = useRef(null);
+  const desktopSliderRef = useRef(null);
 
   // Cycle slides automatically every 4 seconds
   useEffect(() => {
@@ -123,12 +129,73 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // GSAP animation ONLY on text content when slide changes (buttons excluded)
+  // 1. GSAP Master Page Entrance Timeline on Mount
+  useEffect(() => {
+    const tl = gsap.timeline({
+      defaults: { duration: 0.6, ease: "power3.out" },
+    });
+
+    if (headingRef.current) {
+      tl.fromTo(
+        headingRef.current,
+        { opacity: 0, y: 40, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.7 }
+      );
+    }
+
+    if (descRef.current) {
+      tl.fromTo(
+        descRef.current,
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        "-=0.4"
+      );
+    }
+
+    if (quotesRef.current) {
+      tl.fromTo(
+        quotesRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.5 },
+        "-=0.3"
+      );
+    }
+
+    if (featuresRef.current && featuresRef.current.children) {
+      tl.fromTo(
+        featuresRef.current.children,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.35, stagger: 0.08 },
+        "-=0.3"
+      );
+    }
+
+    if (ctaRef.current && ctaRef.current.children) {
+      tl.fromTo(
+        ctaRef.current.children,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.45, stagger: 0.1, ease: "back.out(1.5)" },
+        "-=0.25"
+      );
+    }
+
+    if (desktopSliderRef.current) {
+      tl.fromTo(
+        desktopSliderRef.current,
+        { opacity: 0, x: 50, scale: 0.92 },
+        { opacity: 1, x: 0, scale: 1, duration: 0.8, ease: "power3.out" },
+        "-=0.6"
+      );
+    }
+  }, []);
+
+  // 2. GSAP Timeline Animation ONLY on text content when slide changes
   useEffect(() => {
     if (animatedContentRef.current) {
-      gsap.fromTo(
+      const slideTl = gsap.timeline();
+      slideTl.fromTo(
         animatedContentRef.current.children,
-        { opacity: 0, y: 12 },
+        { opacity: 0, y: 14 },
         { opacity: 1, y: 0, duration: 0.45, stagger: 0.05, ease: "power2.out" }
       );
     }
@@ -181,9 +248,9 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
           {/* LEFT COLUMN */}
           <div className="lg:col-span-7 space-y-6 text-left w-full">
 
-            {/* ANIMATED CONTENT WRAPPER (Heading, Paragraph, Quote, Mobile Slider, Features) */}
+            {/* ANIMATED CONTENT WRAPPER */}
             <div ref={animatedContentRef} className="space-y-6">
-              {/* Live Badge (Hidden on mobile & iPad, visible on desktop lg+) */}
+              {/* Live Badge */}
               <div className="hidden lg:inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-teal-50/90 border border-teal-200/80 text-teal-800 font-semibold shadow-sm" style={{ fontSize: 'var(--text-sm)' }}>
                 <span className="flex h-2.5 w-2.5 relative">
                   <span className="pulse-live absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
@@ -193,18 +260,18 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
               </div>
 
               {/* Hero Heading */}
-              <h1 className="font-extrabold tracking-tight text-slate-900 leading-[1.15]" style={{ fontSize: 'var(--text-hero)' }}>
+              <h1 ref={headingRef} className="font-extrabold tracking-tight text-slate-900 leading-[1.15]" style={{ fontSize: 'var(--text-hero)' }}>
                 {currentSlide.headingHighlight}{" "}
                 <span className="text-gradient-teal">{currentSlide.headingMain}</span>
               </h1>
 
               {/* Body text */}
-              <p className="text-slate-600 leading-relaxed max-w-2xl" style={{ fontSize: 'var(--text-body)' }}>
+              <p ref={descRef} className="text-slate-600 leading-relaxed max-w-2xl" style={{ fontSize: 'var(--text-body)' }}>
                 {currentSlide.description}
               </p>
 
               {/* Quote */}
-              <div className="pl-5 border-l-4 border-teal-600 space-y-1.5 py-1">
+              <div ref={quotesRef} className="pl-5 border-l-4 border-teal-600 space-y-1.5 py-1">
                 <p className="font-serif italic text-teal-950 font-medium tracking-wide" style={{ fontSize: 'var(--text-body)' }}>
                   {currentSlide.quote1}
                 </p>
@@ -213,13 +280,13 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
                 </p>
               </div>
 
-              {/* SLIDE IMAGE CAROUSEL FOR MOBILE & IPAD (Visible < lg, placed right ABOVE feature badges) */}
+              {/* SLIDE IMAGE CAROUSEL FOR MOBILE & IPAD */}
               <div className="block lg:hidden my-6">
                 {renderSlider()}
               </div>
 
               {/* Feature Bullets */}
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
+              <div ref={featuresRef} className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
                 {currentSlide.features.map((f) => (
                   <div key={f} className="flex items-center space-x-2 font-semibold text-slate-700 whitespace-nowrap" style={{ fontSize: 'var(--text-sm)' }}>
                     <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
@@ -229,8 +296,8 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
               </div>
             </div>
 
-            {/* STATIC CTA BUTTONS — OUTSIDE ANIMATION WRAPPER (Never re-animates on slide change) */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4 pt-2 w-full">
+            {/* STATIC CTA BUTTONS */}
+            <div ref={ctaRef} className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4 pt-2 w-full">
               <button
                 onClick={onOpenLogin}
                 className="px-7 py-3.5 rounded-full bg-teal-700 hover:bg-teal-800 text-white font-semibold shadow-lg shadow-teal-700/20 transition-all duration-300 flex items-center justify-center space-x-2.5 text-base whitespace-nowrap"
@@ -250,8 +317,8 @@ const HeroSection = ({ onOpenLogin, onExploreServices }) => {
 
           </div>
 
-          {/* RIGHT COLUMN: SLIDE IMAGE CAROUSEL FOR DESKTOP (Visible >= lg) */}
-          <div className="hidden lg:block lg:col-span-5">
+          {/* RIGHT COLUMN: DESKTOP SLIDER */}
+          <div ref={desktopSliderRef} className="hidden lg:block lg:col-span-5">
             {renderSlider()}
           </div>
 

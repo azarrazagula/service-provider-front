@@ -16,11 +16,34 @@ const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
   const mobileFillRef = useRef(null);
   const isTouching = useRef(false);
 
-  // Desktop login btn: mount slide-in
+  const logoRef = useRef(null);
+  const navLinksRef = useRef(null);
+
+  // Navbar mount GSAP Timeline Entrance
   useEffect(() => {
-    const el = flipWrapRef.current;
-    if (!el) return;
-    gsap.fromTo(el, { opacity: 0, x: 40, scale: 0.85 }, { opacity: 1, x: 0, scale: 1, duration: 0.65, delay: 0.3, ease: 'back.out(1.7)' });
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    if (logoRef.current) {
+      tl.fromTo(logoRef.current, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5 });
+    }
+
+    if (navLinksRef.current && navLinksRef.current.children) {
+      tl.fromTo(
+        navLinksRef.current.children,
+        { opacity: 0, y: -15 },
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.08 },
+        '-=0.3'
+      );
+    }
+
+    if (flipWrapRef.current) {
+      tl.fromTo(
+        flipWrapRef.current,
+        { opacity: 0, x: 30, scale: 0.88 },
+        { opacity: 1, x: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)' },
+        '-=0.25'
+      );
+    }
   }, []);
 
   // Desktop flip handlers
@@ -58,14 +81,14 @@ const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
         <div className="flex items-center justify-between h-20">
 
           {/* Brand */}
-          <div className="flex items-center space-x-3 cursor-pointer group">
+          <div ref={logoRef} className="flex items-center space-x-3 cursor-pointer group">
             <span className="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-teal-700 transition-colors">
               Service Provider
             </span>
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-slate-50/80 p-1.5 rounded-full border border-slate-200/80 shadow-inner">
+          <nav ref={navLinksRef} className="hidden lg:flex items-center space-x-1 bg-slate-50/80 p-1.5 rounded-full border border-slate-200/80 shadow-inner">
             <a href="#home" className="px-6 py-2 rounded-full text-sm font-semibold text-teal-900 bg-white shadow-sm border border-teal-100 transition-all hover:shadow">
               Home
             </a>
