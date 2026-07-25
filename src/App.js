@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import Navbar from "./components/common/Navbar";
+import Navbar from "./components/home/common/Navbar";
 import HeroSection from "./components/home/HeroSection";
 import TrustBadge from "./components/home/TrustBadge";
 import SelectServiceSection from "./components/home/SelectServiceSection";
 import HowItWorksSection from "./components/home/HowItWorksSection";
 import TestimonialsSection from "./components/home/TestimonialsSection";
-import Footer from "./components/common/Footer";
+import Footer from "./components/home/common/Footer";
 import AuthModal from "./components/auth/AuthModal";
-import { CheckCircle2, X } from "./components/common/Icons";
+import { CheckCircle2, X } from "./components/home/common/Icons";
 import { getStoredUser, clearAuthData } from "./components/auth/authService";
 
 function App() {

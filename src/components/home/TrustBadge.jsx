@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldCheck, Lock, PhoneCall } from "../common/Icons";
+import { ShieldCheck, Lock, PhoneCall } from "./common/Icons";
 
 const TrustBadge = () => {
   const trustItems = [

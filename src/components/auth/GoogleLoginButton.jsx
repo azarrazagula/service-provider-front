@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GoogleIcon, Loader2 } from '../common/Icons';
+import { GoogleIcon, Loader2 } from '../home/common/Icons';
 import { googleLoginUser, saveAuthData } from './authService';
 
 const GoogleLoginButton = ({ onSuccess, onError }) => {

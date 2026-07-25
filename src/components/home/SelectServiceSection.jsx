@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import gsap from "gsap";
-import { mainCategories } from "../../data/serviceCategories";
-import { Sparkles } from "../common/Icons";
+import { mainCategories } from "./data/serviceCategories";
+import { Sparkles } from "./common/Icons";
 
 const SelectServiceSection = ({ onSelectCategory }) => {
   const [activeIndex, setActiveIndex] = useState(0);

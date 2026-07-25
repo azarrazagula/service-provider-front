@@ -1,6 +1,6 @@
-import doctorImg from "../assets/Cardiologist (Heart).webp";
-import electricianImg from "../assets/Ecltric.webp";
-import plumberImg from "../assets/Plumbers.webp";
+import doctorImg from "../../../assets/Cardiologist (Heart).webp";
+import electricianImg from "../../../assets/Ecltric.webp";
+import plumberImg from "../../../assets/Plumbers.webp";
 
 export const mainCategories = [
   {

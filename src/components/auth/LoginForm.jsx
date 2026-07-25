@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, AlertCircle, Loader2, ArrowRight, Eye, EyeOff } from '../common/Icons';
+import { Mail, Lock, AlertCircle, Loader2, ArrowRight, Eye, EyeOff } from '../home/common/Icons';
 import { loginUser, saveAuthData } from './authService';
 import GoogleLoginButton from './GoogleLoginButton';
 

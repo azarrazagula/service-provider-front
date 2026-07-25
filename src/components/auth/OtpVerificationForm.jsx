@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mail, AlertCircle, Loader2, CheckCircle2, ArrowRight, ArrowLeft, RefreshCw, Key } from '../common/Icons';
+import { Mail, AlertCircle, Loader2, CheckCircle2, ArrowRight, ArrowLeft, RefreshCw, Key } from '../home/common/Icons';
 import { verifyOtpUser, resendOtpUser, saveAuthData } from './authService';
 
 const OtpVerificationForm = ({ email: initialEmail, onSuccess, onBackToLogin }) => {

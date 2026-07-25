@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Sparkles, ShieldCheck } from '../common/Icons';
+import { X, User, Sparkles, ShieldCheck } from '../home/common/Icons';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import OtpVerificationForm from './OtpVerificationForm';
