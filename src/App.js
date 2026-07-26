@@ -7,6 +7,7 @@ import HowItWorksSection from "./components/home/HowItWorksSection";
 import TestimonialsSection from "./components/home/TestimonialsSection";
 import Footer from "./components/home/common/Footer";
 import AuthModal from "./components/auth/AuthModal";
+import ServiceHubLayout from "./components/Services/UI/Layout";
 import { CheckCircle2, X } from "./components/home/common/Icons";
 import { getStoredUser, clearAuthData } from "./components/auth/authService";
 
@@ -23,9 +24,8 @@ function App() {
   };
 
   const handleSelectCategory = (cat) => {
-    // Select service action - does NOT open login modal as per user instruction
     showNotification(
-      `You selected: ${cat.title}. Next, pick a provider below or choose your slot.`,
+      `You selected: ${cat.title}. Next, pick a provider below or choose your slot.`
     );
   };
 
@@ -40,6 +40,17 @@ function App() {
     showNotification("Logged out successfully.");
   };
 
+  // If User is Logged In -> Render ServiceHub Dashboard (src/components/Services/UI/Layout.jsx)
+  if (currentUser) {
+    return (
+      <ServiceHubLayout
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        showNotification={showNotification}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900 selection:bg-teal-100 selection:text-teal-900">
       {/* Toast Notification Alert */}
@@ -52,7 +63,8 @@ function App() {
           <button
             type="button"
             onClick={() => setNotification(null)}
-            className="text-slate-400 hover:text-white transition-colors">
+            className="text-slate-400 hover:text-white transition-colors"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -74,11 +86,12 @@ function App() {
             const el = document.getElementById("select-service");
             if (el) el.scrollIntoView({ behavior: "smooth" });
           }}
+          onOpenLogin={() => setIsAuthModalOpen(true)}
         />
 
         <TrustBadge />
 
-        {/* Section 2: Which service do you want? (Doctor, Electrician, Plumber) */}
+        {/* Section 2: Which service do you want? */}
         <SelectServiceSection onSelectCategory={handleSelectCategory} />
 
         {/* Section 3: How It Works & CTA Banner */}
@@ -90,7 +103,7 @@ function App() {
           }}
         />
 
-        {/* Section 4: Real User Testimonials & Reviews (6 Cards) */}
+        {/* Section 4: Real User Testimonials & Reviews */}
         <TestimonialsSection />
       </main>
 
