@@ -473,6 +473,39 @@ export const ChevronRight = ({ className = "w-6 h-6" }) => (
   </svg>
 );
 
+export const Locate = ({ className = "w-6 h-6" }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <line x1="12" y1="2" x2="12" y2="5" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="12" y1="19" x2="12" y2="22" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="2" y1="12" x2="5" y2="12" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="19" y1="12" x2="22" y2="12" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="12" cy="12" r="7" />
+  </svg>
+);
+
+export const LocateFixed = ({ className = "w-6 h-6" }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <line x1="12" y1="2" x2="12" y2="5" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="12" y1="19" x2="12" y2="22" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="2" y1="12" x2="5" y2="12" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="19" y1="12" x2="22" y2="12" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="12" cy="12" r="7" />
+    <circle cx="12" cy="12" r="3" fill="currentColor" />
+  </svg>
+);
+
 
 
 
