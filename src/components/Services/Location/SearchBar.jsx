@@ -16,6 +16,7 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [confirmedCity, setConfirmedCity] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [locationsList, setLocationsList] = useState(defaultCities);
 
@@ -27,9 +28,6 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
   const dtBtnRef = useRef(null);
   const chevronRef = useRef(null);
   const panelRef = useRef(null);
-
-  // cityRef — always holds the latest selected city (fixes stale closure bug)
-  const pendingCityRef = useRef('');
 
   // ── Fetch service locations from API endpoint ──────────────────────────────
   useEffect(() => {
@@ -70,6 +68,7 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
   const collapseSearch = (cityName) => {
     // cityName is passed directly — no stale closure issue
     setSelectedCity(cityName);
+    setConfirmedCity(''); // Clear previous confirmed city while choosing new slot
     setShowSuggestions(false);
     if (onSelectLocation) onSelectLocation(cityName);
 
@@ -156,15 +155,10 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
     );
   };
 
-  const [verifying, setVerifying] = useState(false);
-  const [locationError, setLocationError] = useState('');
-
   // ── Verify Location with Backend API ──────────────────────────────────────
   const verifyAndSelectLocation = async (cityName) => {
     if (!cityName) return;
     try {
-      setVerifying(true);
-      setLocationError('');
       const response = await fetch('http://localhost:5001/api/alllocations/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -177,15 +171,12 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
         setQuery(targetCityName);
         collapseSearch(targetCityName);
       } else {
-        setLocationError(data.message || `Service is currently unavailable in ${cityName}`);
         setShowSuggestions(true);
       }
     } catch (err) {
       console.error('Error verifying location:', err);
       // Fallback if offline/network error: proceed with collapse
       collapseSearch(cityName);
-    } finally {
-      setVerifying(false);
     }
   };
 
@@ -235,6 +226,18 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
     }
   };
 
+  const handleDateTimeConfirm = (scheduleData) => {
+    const activeCity = selectedCity || scheduleData?.city || query || 'Chennai';
+    setConfirmedCity(activeCity);
+
+    // Switch back to search box!
+    expandSearch();
+
+    if (onSelectDateTime) {
+      onSelectDateTime(scheduleData);
+    }
+  };
+
   return (
     <div ref={containerRef} className="w-full max-w-xl mx-auto space-y-4 relative">
 
@@ -256,7 +259,7 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
             ref={searchInputRef}
             type="text"
             value={query}
-            onChange={(e) => { setQuery(e.target.value); setLocationError(''); setShowSuggestions(true); }}
+            onChange={(e) => { setQuery(e.target.value); setConfirmedCity(''); setShowSuggestions(true); }}
             onFocus={() => setShowSuggestions(true)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -355,18 +358,18 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
         <div className="pt-2">
           <Dates
             currentLocation={selectedCity || 'Chennai'}
-            onSelectDateTime={onSelectDateTime}
+            onSelectDateTime={handleDateTimeConfirm}
           />
         </div>
       </div>
 
-      {/* ── LOCATION BADGE BELOW CARD — showing selected location pill badge ──────── */}
-      {searched && selectedCity && (
-        <div className="flex items-center justify-center pt-1">
-          <span className="inline-flex items-center space-x-1 px-3 py-0.5 rounded-full bg-teal-100 text-teal-900 font-extrabold text-xs border border-teal-200">
-            <MapPin className="w-3 h-3 text-teal-700" />
-            <span>{selectedCity}</span>
-          </span>
+      {/* ── PLAIN CITY NAME BELOW SEARCH BOX (NO CARDS / BADGES) ───────────────── */}
+      {confirmedCity && (
+        <div className="flex items-center justify-center pt-2">
+          <div className="flex items-center space-x-1.5 text-teal-900 font-black text-xs sm:text-sm">
+            <MapPin className="w-4 h-4 text-teal-600 shrink-0" />
+            <span>{confirmedCity}</span>
+          </div>
         </div>
       )}
 

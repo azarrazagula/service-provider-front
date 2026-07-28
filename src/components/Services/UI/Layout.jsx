@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SearchBar from '../Location/SearchBar';
-import { MapPin, Clock, X, LogOut, CheckCircle2, Menu, User } from '../../home/common/Icons';
+import { X, LogOut, Menu, User } from '../../home/common/Icons';
 import { gsap } from 'gsap';
 
 const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
@@ -20,57 +20,12 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
     }
   };
 
-  // Handle Date & Time selection -> Slide to Center Summary Card
+  // Handle Date & Time selection
   const handleDateTimeSelect = (schedule) => {
     setSelectedSchedule(schedule);
-
-    if (containerRef.current) {
-      gsap.to(containerRef.current, {
-        opacity: 0,
-        y: -20,
-        duration: 0.35,
-        ease: 'power2.in',
-        onComplete: () => {
-          setIsConfirmed(true);
-          if (showNotification) {
-            showNotification(`Locked ${selectedLocation || 'Location'} for ${schedule.formatted}`);
-          }
-        },
-      });
-    } else {
-      setIsConfirmed(true);
-    }
-  };
-
-  // GSAP animation for Summary Appearance
-  useEffect(() => {
-    if (isConfirmed && summaryRef.current) {
-      gsap.fromTo(
-        summaryRef.current,
-        { opacity: 0, scale: 0.9, y: 30 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: 'back.out(1.4)' }
-      );
-    }
-  }, [isConfirmed]);
-
-  // Reset Flow via X button
-  const handleResetFlow = () => {
-    if (summaryRef.current) {
-      gsap.to(summaryRef.current, {
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.25,
-        ease: 'power2.in',
-        onComplete: () => {
-          setIsConfirmed(false);
-          setSelectedLocation('');
-          setSelectedSchedule(null);
-        },
-      });
-    } else {
-      setIsConfirmed(false);
-      setSelectedLocation('');
-      setSelectedSchedule(null);
+    setIsConfirmed(true);
+    if (showNotification) {
+      showNotification(`Locked ${selectedLocation || 'Location'} for ${schedule.formatted}`);
     }
   };
 
@@ -172,80 +127,14 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
       {/* MAIN CONTAINER (Positioned right below helper text banner) */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 flex flex-col items-center justify-start">
 
-        {!isConfirmed ? (
-          /* COLLAPSIBLE SEARCH & DATE BOX CONTAINER */
-          <div ref={containerRef} className="w-full max-w-xl mx-auto">
-            <SearchBar
-              onSelectLocation={handleLocationSelect}
-              onSelectDateTime={handleDateTimeSelect}
-            />
-          </div>
-        ) : (
-          /* CENTERED SUMMARY CARD WITH RESET X BUTTON */
-          <div ref={summaryRef} className="w-full max-w-xl mx-auto">
-            <div className="relative bg-white rounded-3xl p-6 sm:p-8 border-2 border-teal-500 shadow-2xl space-y-5 overflow-hidden">
-
-              {/* RESET BUTTON X ON TOP RIGHT */}
-              <button
-                type="button"
-                onClick={handleResetFlow}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 flex items-center justify-center transition-all duration-200 border border-slate-200 shadow-xs group"
-                aria-label="Reset location and date"
-                title="Reset details"
-              >
-                <X className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              </button>
-
-              <div className="flex items-center space-x-2 text-teal-700 font-extrabold text-xs uppercase tracking-wider">
-                <CheckCircle2 className="w-4 h-4 text-teal-600" />
-                <span>Service Details Confirmed</span>
-              </div>
-
-              {/* SIDE-BY-SIDE SUMMARY */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
-                {/* Location */}
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center shrink-0">
-                    <MapPin className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Location</span>
-                    <div className="text-xs sm:text-sm font-extrabold text-slate-900">{selectedLocation || 'Chennai'}</div>
-                  </div>
-                </div>
-
-                {/* Date & Time */}
-                <div className="flex items-center space-x-3 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-200 sm:pl-3">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Date & Time</span>
-                    <div className="text-xs sm:text-sm font-extrabold text-slate-900">{selectedSchedule?.formatted}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Plumber Offer Notification */}
-              <div className="bg-amber-50 rounded-2xl p-3 border border-amber-200 flex items-center space-x-2.5 text-xs text-amber-950 font-semibold">
-                <span className="text-lg">⚡</span>
-                <div>
-                  <span className="font-black text-amber-900">60% Plumber Offer Applied!</span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <p className="text-[11px] text-slate-400 font-medium">
-                  Click the <span className="font-bold text-slate-700">X</span> button above to edit location or time.
-                </p>
-              </div>
-
-            </div>
-          </div>
-        )}
-
+        {/* SEARCH & DATE BOX CONTAINER */}
+        <div ref={containerRef} className="w-full max-w-xl mx-auto">
+          <SearchBar
+            onSelectLocation={handleLocationSelect}
+            onSelectDateTime={handleDateTimeSelect}
+          />
+        </div>
       </main>
-
       {/* FOOTER */}
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
         <p>© 2026 ServiceHub. Built by <span className="font-bold text-slate-900">Azar Ibrahim</span></p>
