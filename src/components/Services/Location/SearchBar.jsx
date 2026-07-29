@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, MapPin, CheckCircle2, Calendar, ChevronDown } from '../../home/common/Icons';
+import { Search, CheckCircle2, Calendar, ChevronDown } from '../../home/common/Icons';
 import Dates from './Dates';
 import { gsap } from 'gsap';
 
@@ -20,6 +20,10 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [locationsList, setLocationsList] = useState(defaultCities);
 
+  // ── GSAP Typewriter Placeholder Animation ─────────────────────────────
+  const [animatedPlaceholder, setAnimatedPlaceholder] = useState('Search city or area...');
+  const animationTlRef = useRef(null);
+
   // DOM refs for GSAP
   const containerRef = useRef(null); // outer wrapper — for click-outside
   const searchBoxRef = useRef(null); // GSAP animation target (flex-1 in row)
@@ -27,6 +31,117 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
   const dtBtnRef = useRef(null);
   const chevronRef = useRef(null);
   const panelRef = useRef(null);
+
+  // ── GSAP Typewriter Letter-by-Letter Animation Effect ─────────────────────
+  useEffect(() => {
+    if (query.trim() !== '') {
+      if (animationTlRef.current) animationTlRef.current.kill();
+      return;
+    }
+
+    let isCancelled = false;
+
+    // Mode 2: Confirmed City Animation ("City for [CityName]")
+    if (confirmedCity) {
+      const targetText = `City for ${confirmedCity}`;
+
+      const animateConfirmedCity = () => {
+        if (isCancelled) return;
+        const obj = { len: 0 };
+        setAnimatedPlaceholder('');
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            if (isCancelled) return;
+            // Stop & pause for 2.2 seconds after typing full text
+            gsap.delayedCall(2.2, () => {
+              if (isCancelled) return;
+              // Erase letter by letter
+              gsap.to(obj, {
+                len: 0,
+                duration: 0.45,
+                ease: 'power1.in',
+                onUpdate: () => {
+                  setAnimatedPlaceholder(targetText.substring(0, Math.floor(obj.len)));
+                },
+                onComplete: () => {
+                  if (isCancelled) return;
+                  animateConfirmedCity();
+                },
+              });
+            });
+          },
+        });
+
+        animationTlRef.current = tl;
+
+        // Typewriter letter by letter
+        tl.to(obj, {
+          len: targetText.length,
+          duration: targetText.length * 0.09,
+          ease: 'none',
+          onUpdate: () => {
+            setAnimatedPlaceholder(targetText.substring(0, Math.ceil(obj.len)));
+          },
+        });
+      };
+
+      animateConfirmedCity();
+    }
+    // Mode 1: Default Placeholder Animation ("Search city or area...")
+    else {
+      const defaultText = 'Search city or area...';
+
+      const animateDefaultText = () => {
+        if (isCancelled) return;
+        const obj = { len: 0 };
+        setAnimatedPlaceholder('');
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            if (isCancelled) return;
+            // Stop & pause for 2.2 seconds
+            gsap.delayedCall(2.2, () => {
+              if (isCancelled) return;
+              // Erase letter by letter
+              gsap.to(obj, {
+                len: 0,
+                duration: 0.45,
+                ease: 'power1.in',
+                onUpdate: () => {
+                  setAnimatedPlaceholder(defaultText.substring(0, Math.floor(obj.len)));
+                },
+                onComplete: () => {
+                  if (isCancelled) return;
+                  animateDefaultText();
+                },
+              });
+            });
+          },
+        });
+
+        animationTlRef.current = tl;
+
+        // Typewriter letter by letter
+        tl.to(obj, {
+          len: defaultText.length,
+          duration: defaultText.length * 0.08,
+          ease: 'none',
+          onUpdate: () => {
+            setAnimatedPlaceholder(defaultText.substring(0, Math.ceil(obj.len)));
+          },
+        });
+      };
+
+      animateDefaultText();
+    }
+
+    return () => {
+      isCancelled = true;
+      if (animationTlRef.current) animationTlRef.current.kill();
+      gsap.killTweensOf(animationTlRef.current);
+    };
+  }, [confirmedCity, query]);
 
   // ── Fetch service locations from API endpoint ──────────────────────────────
   useEffect(() => {
@@ -261,7 +376,7 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
                 handleSearchClick(e);
               }
             }}
-            placeholder="Search city or area..."
+            placeholder={query ? '' : animatedPlaceholder}
             className="flex-1 py-2.5 text-sm font-normal text-slate-600 bg-transparent outline-none placeholder:text-slate-400 min-w-0"
             style={{ minWidth: 0 }}
           />
@@ -350,16 +465,6 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
           />
         </div>
       </div>
-
-      {/* ── SELECTED CITY BADGE BELOW SEARCH BOX (#EFF6FF bg + #2563EB icon + #1D4ED8 text) ── */}
-      {confirmedCity && (
-        <div className="flex items-center justify-center pt-2">
-          <div className="flex items-center space-x-1.5 bg-[#EFF6FF] border border-blue-200/80 px-3.5 py-1.5 rounded-xl text-[#1D4ED8] font-bold text-xs sm:text-sm shadow-2xs">
-            <MapPin className="w-4 h-4 text-[#2563EB] shrink-0" />
-            <span>{confirmedCity}</span>
-          </div>
-        </div>
-      )}
 
     </div>
   );
