@@ -32,7 +32,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer ref={footerRef} className="bg-white border-t border-slate-200 text-slate-600 py-8 sm:py-12 lg:py-16">
+    <footer ref={footerRef} className="hidden lg:block bg-white border-t border-slate-200 text-slate-600 py-8 sm:py-12 lg:py-16">
       <div ref={footerContentRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 lg:gap-12">
 

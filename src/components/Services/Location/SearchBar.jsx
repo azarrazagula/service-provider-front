@@ -11,7 +11,7 @@ const defaultCities = [
   { id: 'coimbatore', name: 'Coimbatore', region: 'Tamil Nadu, India', badge: 'Popular' },
 ];
 
-const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
+const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNotification }) => {
   const [searched, setSearched] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -24,7 +24,6 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
   const containerRef = useRef(null); // outer wrapper — for click-outside
   const searchBoxRef = useRef(null); // GSAP animation target (flex-1 in row)
   const searchInputRef = useRef(null);
-  const pinIconRef = useRef(null);
   const dtBtnRef = useRef(null);
   const chevronRef = useRef(null);
   const panelRef = useRef(null);
@@ -74,9 +73,9 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
 
     const tl = gsap.timeline({ onComplete: () => setSearched(true) });
 
-    // Fade + collapse pin icon & input together
+    // Fade + collapse input
     tl.to(
-      [pinIconRef.current, searchInputRef.current],
+      searchInputRef.current,
       {
         opacity: 0, width: 0, flex: '0 0 0px',
         paddingLeft: 0, paddingRight: 0, margin: 0,
@@ -115,7 +114,7 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
 
     const tl = gsap.timeline({
       onComplete: () => {
-        gsap.set([pinIconRef.current, searchInputRef.current], { clearProps: 'all' });
+        gsap.set(searchInputRef.current, { clearProps: 'all' });
         setSearched(false);
       },
     });
@@ -149,7 +148,7 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
 
     // Fade in content
     tl.to(
-      [pinIconRef.current, searchInputRef.current],
+      searchInputRef.current,
       { opacity: 1, width: 'auto', duration: 0.22, ease: 'power2.out' },
       0.22
     );
@@ -247,13 +246,8 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
         {/* SEARCH BOX — GSAP animation target */}
         <div
           ref={searchBoxRef}
-          className="flex items-center justify-between bg-white border-2 border-slate-200 focus-within:border-teal-600 focus-within:ring-4 focus-within:ring-teal-500/10 shadow-lg rounded-2xl p-1.5 overflow-hidden flex-1 min-w-0"
+          className="flex items-center justify-between bg-white border border-slate-200 hover:border-slate-800 focus-within:border-slate-900 shadow-md rounded-2xl p-1.5 pl-4 overflow-hidden flex-1 min-w-0 transition-colors"
         >
-          {/* Pin icon (Light gray color) */}
-          <div ref={pinIconRef} className="pl-2.5 pr-1.5 text-slate-400 shrink-0">
-            <MapPin className="w-5 h-5" />
-          </div>
-
           {/* Input — light text, Enter key support */}
           <input
             ref={searchInputRef}
@@ -272,11 +266,11 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
             style={{ minWidth: 0 }}
           />
 
-          {/* Search button — light gray icon & soft background */}
+          {/* Search button — black hover effect */}
           <button
             type="button"
             onClick={handleSearchClick}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-all active:scale-95 shrink-0 cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 text-slate-400 hover:bg-slate-900 hover:text-white flex items-center justify-center shrink-0 transition-all cursor-pointer"
             aria-label={searched ? 'Back to search' : 'Search'}
             title={searched ? 'Click to expand search' : 'Search Location'}
           >
@@ -293,32 +287,31 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
           <button
             type="button"
             onClick={toggleDropdown}
-            className="w-full h-[48px] flex items-center justify-between bg-white border-2 border-slate-200 hover:border-teal-600 px-3 rounded-2xl shadow-lg cursor-pointer group min-w-0"
+            className="w-full h-[48px] flex items-center justify-between bg-white border border-slate-200 hover:border-slate-800 px-3 rounded-2xl shadow-md cursor-pointer group min-w-0 transition-colors"
           >
             <div className="flex items-center space-x-2.5 min-w-0 flex-1">
-              <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-blue-200/80 flex items-center justify-center shrink-0">
                 <Calendar className="w-4 h-4" />
               </div>
               <div className="text-left min-w-0 flex-1 truncate">
-                <div className="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-teal-800 truncate leading-tight">
+                <div className="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-[#2563EB] truncate leading-tight">
                   Select Date & Time
                 </div>
               </div>
             </div>
-            <div ref={chevronRef} className="text-slate-400 group-hover:text-teal-700 pl-1 shrink-0">
+            <div ref={chevronRef} className="text-slate-400 group-hover:text-[#2563EB] pl-1 shrink-0">
               <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </button>
         </div>
       </div>
 
-      {/* ── CITY SUGGESTIONS DROPDOWN ──────────────────────────────────────
-           Positioned absolute relative to containerRef (no overflow clip issues) */}
+      {/* ── CITY SUGGESTIONS DROPDOWN (No icons on list items) ── */}
       {showSuggestions && !searched && (
-        <div className="absolute top-[60px] left-0 right-0 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50">
+        <div className="absolute top-[60px] left-0 right-0 bg-white rounded-[12px] shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-slate-200/90 overflow-hidden z-50">
           <div className="px-4 py-2 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             <span>Suggested Locations</span>
-            <span className="text-teal-700 font-semibold">Tamil Nadu</span>
+            <span className="text-[#64748B] font-medium">Tamil Nadu</span>
           </div>
           <div className="max-h-60 overflow-y-auto divide-y divide-slate-100">
             {filteredCities.map((city) => (
@@ -327,21 +320,16 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
                 type="button"
                 onMouseDown={(e) => e.preventDefault()} // prevent blur before click fires
                 onClick={() => handleCitySelect(city.name)}
-                className="w-full px-4 py-3 text-left hover:bg-teal-50/60 transition-colors flex items-center justify-between group"
+                className="w-full px-5 py-3 text-left hover:bg-[#EFF6FF]/70 transition-colors flex items-center justify-between group cursor-pointer"
               >
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                    <MapPin className="w-4 h-4" />
+                <div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#2563EB]">
+                    {city.name}
                   </div>
-                  <div>
-                    <div className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-teal-900">
-                      {city.name}
-                    </div>
-                    <div className="text-[11px] text-slate-400">{city.region}</div>
-                  </div>
+                  <div className="text-[11px] text-slate-400">{city.region}</div>
                 </div>
                 {selectedCity === city.name && (
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
                 )}
               </button>
             ))}
@@ -363,11 +351,11 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime }) => {
         </div>
       </div>
 
-      {/* ── PLAIN CITY NAME BELOW SEARCH BOX (NO CARDS / BADGES) ───────────────── */}
+      {/* ── SELECTED CITY BADGE BELOW SEARCH BOX (#EFF6FF bg + #2563EB icon + #1D4ED8 text) ── */}
       {confirmedCity && (
         <div className="flex items-center justify-center pt-2">
-          <div className="flex items-center space-x-1.5 text-teal-900 font-black text-xs sm:text-sm">
-            <MapPin className="w-4 h-4 text-teal-600 shrink-0" />
+          <div className="flex items-center space-x-1.5 bg-[#EFF6FF] border border-blue-200/80 px-3.5 py-1.5 rounded-xl text-[#1D4ED8] font-bold text-xs sm:text-sm shadow-2xs">
+            <MapPin className="w-4 h-4 text-[#2563EB] shrink-0" />
             <span>{confirmedCity}</span>
           </div>
         </div>

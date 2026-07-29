@@ -24,9 +24,7 @@ function App() {
   };
 
   const handleSelectCategory = (cat) => {
-    showNotification(
-      `You selected: ${cat.title}. Next, pick a provider below or choose your slot.`
-    );
+    setIsAuthModalOpen(true);
   };
 
   const handleAuthSuccess = ({ user, message }) => {
@@ -92,7 +90,10 @@ function App() {
         <TrustBadge />
 
         {/* Section 2: Which service do you want? */}
-        <SelectServiceSection onSelectCategory={handleSelectCategory} />
+        <SelectServiceSection
+          onSelectCategory={handleSelectCategory}
+          onOpenLogin={() => setIsAuthModalOpen(true)}
+        />
 
         {/* Section 3: How It Works & CTA Banner */}
         <HowItWorksSection

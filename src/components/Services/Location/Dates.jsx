@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, CheckCircle2 } from '../../home/common/Icons';
+import { Clock, CheckCircle2 } from '../../home/common/Icons';
 
 const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
   const getTodayString = () => {
@@ -100,7 +100,7 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
               setVerificationResult(null);
               setErrorMsg('');
             }}
-            className="w-full px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold bg-slate-50/80 border-2 border-slate-200 text-slate-800 outline-none transition-all focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-500/10 cursor-pointer shadow-xs"
+            className="w-full px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold bg-slate-50/80 border border-slate-200 hover:border-slate-800 text-[#2563EB] outline-none transition-colors focus:border-slate-900 focus:bg-white focus:outline-none cursor-pointer shadow-xs"
           />
         </div>
       </div>
@@ -111,8 +111,8 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
           <label className="text-xs font-extrabold text-slate-400 uppercase tracking-wider block">
             Choose Time Slot
           </label>
-          <span className="text-[11px] text-teal-700 font-bold flex items-center space-x-1.5 bg-teal-50/80 border border-teal-200 px-2.5 py-0.5 rounded-full shadow-2xs">
-            <Clock className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+          <span className="text-[11px] text-[#1D4ED8] font-bold flex items-center space-x-1.5 bg-[#EFF6FF] border border-blue-200/80 px-2.5 py-0.5 rounded-full shadow-2xs">
+            <Clock className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
             <span>07:00 AM - 09:00 PM</span>
           </span>
         </div>
@@ -138,10 +138,10 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
               setVerificationResult(null);
               setErrorMsg('');
             }}
-            className="w-full px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold bg-slate-50/80 border-2 border-slate-200 text-slate-800 outline-none transition-all focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-500/10 cursor-pointer shadow-xs"
+            className="w-full px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold bg-slate-50/80 border border-slate-200 hover:border-slate-800 text-[#2563EB] outline-none transition-colors focus:border-slate-900 focus:bg-white focus:outline-none cursor-pointer shadow-xs"
           />
           {selectedTime && (
-            <span className="absolute right-3 px-2.5 py-1 rounded-xl bg-teal-700 text-white font-extrabold text-xs shadow-sm pointer-events-none">
+            <span className="absolute right-3 px-2.5 py-1 rounded-xl bg-[#2563EB] text-white font-extrabold text-xs shadow-sm pointer-events-none">
               {selectedTime}
             </span>
           )}
@@ -156,25 +156,25 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
       )}
 
       {verificationResult && (
-        <div className="p-3.5 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 space-y-1">
-          <div className="flex items-center space-x-1.5 text-xs font-bold text-teal-800">
-            <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
+          <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-800">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Slot Verified & Available!</span>
           </div>
-          <p className="text-xs text-teal-950 font-medium">
+          <p className="text-xs text-emerald-950 font-medium">
             {verificationResult.bookingSummary}
           </p>
         </div>
       )}
 
-      {/* Confirm Date & Time Schedule Button */}
+      {/* Confirm Date & Time Schedule Button (#2563EB Blue Primary CTA) */}
       <button
         type="button"
         disabled={isVerifying}
         onClick={handleConfirm}
-        className="w-full py-3.5 rounded-2xl bg-teal-800 hover:bg-teal-700 disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-lg shadow-teal-700/20 transition-all duration-300 transform active:scale-98"
+        className="w-full py-3.5 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/25 transition-all duration-300 transform active:scale-98 cursor-pointer"
       >
-        <CheckCircle2 className="w-5 h-5 text-teal-300" />
+        <CheckCircle2 className="w-5 h-5 text-blue-100" />
         <span>
           {isVerifying ? 'Verifying Slot...' : 'Confirm Schedule'}
         </span>

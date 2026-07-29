@@ -1,176 +1,237 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, LogOut } from './Icons';
+import React, { useState, useRef, useEffect } from 'react';
+import { LogOut, User, CheckCircle2, X } from './Icons';
 import { gsap } from 'gsap';
 
-// Style constants (defined outside component — no re-creation on render)
-const FLIP_INNER_STYLE = { transformStyle: 'preserve-3d', position: 'relative', width: '100%', height: '100%' };
-const FRONT_FACE_STYLE = { backfaceVisibility: 'hidden' };
-const BACK_FACE_STYLE  = { backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' };
-const FILL_STYLE = { position: 'absolute', inset: 0, backgroundColor: '#4f46e5', transformOrigin: 'top', transform: 'scaleY(0)', zIndex: 0 };
-
 const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const flipWrapRef  = useRef(null);
-  const flipInnerRef = useRef(null);
-  const mobileBtnRef = useRef(null);
-  const mobileFillRef = useRef(null);
-  const isTouching = useRef(false);
-
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const logoRef = useRef(null);
-  const navLinksRef = useRef(null);
+  const dropdownRef = useRef(null);
 
-  // Navbar mount GSAP Timeline Entrance
+  // Entrance animation
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
     if (logoRef.current) {
-      tl.fromTo(logoRef.current, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5 });
-    }
-
-    if (navLinksRef.current && navLinksRef.current.children) {
-      tl.fromTo(
-        navLinksRef.current.children,
-        { opacity: 0, y: -15 },
-        { opacity: 1, y: 0, duration: 0.4, stagger: 0.08 },
-        '-=0.3'
-      );
-    }
-
-    if (flipWrapRef.current) {
-      tl.fromTo(
-        flipWrapRef.current,
-        { opacity: 0, x: 30, scale: 0.88 },
-        { opacity: 1, x: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)' },
-        '-=0.25'
-      );
+      gsap.fromTo(logoRef.current, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
     }
   }, []);
 
-  // Desktop flip handlers
-  const handleFlipEnter = () => gsap.to(flipInnerRef.current, { rotateY: 180, duration: 0.45, ease: 'power2.inOut' });
-  const handleFlipLeave = () => gsap.to(flipInnerRef.current, { rotateY: 0,   duration: 0.45, ease: 'power2.inOut' });
-  const handleLoginClick = () => {
-    gsap.timeline()
-      .to(flipWrapRef.current, { scale: 0.9, duration: 0.1, ease: 'power2.in' })
-      .to(flipWrapRef.current, { scale: 1,   duration: 0.25, ease: 'back.out(2)' });
-    onOpenLogin();
-  };
+  // GSAP animation for dropdown
+  useEffect(() => {
+    if (dropdownOpen && dropdownRef.current) {
+      gsap.fromTo(
+        dropdownRef.current,
+        { scale: 0.85, opacity: 0, y: -10, transformOrigin: 'top right' },
+        { scale: 1, opacity: 1, y: 0, duration: 0.25, ease: 'back.out(1.5)' }
+      );
+    }
+  }, [dropdownOpen]);
 
-  // Mobile fill-sweep handlers
-  const handleMobileHoverEnter = () => {
-    if (isTouching.current) return;
-    gsap.to(mobileFillRef.current, { scaleY: 1, duration: 0.38, ease: 'power2.inOut' });
-  };
-  const handleMobileHoverLeave = () =>
-    gsap.to(mobileFillRef.current, { scaleY: 0, duration: 0.3, ease: 'power2.inOut' });
-
-  // Mobile touch feedback
-  const handleMobileTouchStart = () => {
-    isTouching.current = true;
-    gsap.to(mobileBtnRef.current, { scale: 0.96, duration: 0.1, ease: 'power2.in' });
-  };
-  const handleMobileTouchEnd = () => {
-    gsap.to(mobileBtnRef.current, { scale: 1, duration: 0.2, ease: 'back.out(2)' });
-    gsap.to(mobileFillRef.current, { scaleY: 0, duration: 0.2, ease: 'power2.out' });
-    setTimeout(() => { isTouching.current = false; }, 500);
+  const handleCloseDropdown = () => {
+    if (dropdownRef.current) {
+      gsap.to(dropdownRef.current, {
+        scale: 0.9,
+        opacity: 0,
+        y: -8,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setDropdownOpen(false),
+      });
+    } else {
+      setDropdownOpen(false);
+    }
   };
 
   return (
-    <header className="sticky top-0 z-50 glass-nav shadow-sm">
-      <div className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-16">
-        <div className="flex items-center justify-between h-20">
+    <>
+      <header className={`sticky top-0 ${dropdownOpen ? 'z-[999]' : 'z-50'} bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs relative`}>
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="flex items-center justify-between h-18 sm:h-20">
 
-          {/* Brand */}
-          <div ref={logoRef} className="flex items-center space-x-3 cursor-pointer group">
-            <span className="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-teal-700 transition-colors">
-              Service Provider
-            </span>
+            {/* Brand Logo */}
+            <div ref={logoRef} className="flex items-center space-x-3 cursor-pointer group">
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+                Service <span className="text-teal-600">Provider</span>
+              </span>
+            </div>
+
+            {/* RIGHT SIDE: LOGIN / USER ICON ONLY (VISIBLE ON DESKTOP 1024px+, HIDDEN ON MOBILE & IPAD) */}
+            <div className="relative hidden lg:block">
+              <button
+                type="button"
+                onClick={() => {
+                  if (dropdownOpen) {
+                    handleCloseDropdown();
+                  } else {
+                    setDropdownOpen(true);
+                  }
+                }}
+                className="p-2.5 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-300 hover:shadow-[0_0_16px_rgba(37,99,235,0.2)] flex items-center justify-center cursor-pointer group"
+                aria-label="Account Menu"
+                title="Account Menu"
+              >
+                <User className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+              </button>
+            </div>
           </div>
+        </div>
+      </header>
 
-          {/* Desktop Nav */}
-          <nav ref={navLinksRef} className="hidden lg:flex items-center space-x-1 bg-slate-50/80 p-1.5 rounded-full border border-slate-200/80 shadow-inner">
-            <a href="#home" className="px-6 py-2 rounded-full text-sm font-semibold text-teal-900 bg-white shadow-sm border border-teal-100 transition-all hover:shadow">
-              Home
-            </a>
-          </nav>
+      {/* FULL ENTIRE SCREEN BACKDROP & DROPDOWN (OUTSIDE HEADER TO COVER 100% OF PAGE) */}
+      {dropdownOpen && (
+        <div className="fixed inset-0 z-[99999] pointer-events-auto">
+          {/* Entire Screen Light Backdrop Overlay (Backside page visible, clicks blocked) */}
+          <div
+            onClick={handleCloseDropdown}
+            className="fixed inset-0 bg-slate-950/20 backdrop-blur-[2px] animate-fadeIn cursor-pointer"
+          />
 
-          {/* Desktop Right: User or Flip Login */}
-          <div className="hidden lg:flex items-center space-x-4">
+          {/* Floating Dropdown Card */}
+          <div
+            ref={dropdownRef}
+            className="fixed right-4 sm:right-8 lg:right-16 top-[72px] sm:top-[80px] z-[100000] w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 text-slate-900 space-y-3 animate-fadeIn"
+          >
+            {/* INLINE USER DETAILS */}
             {currentUser ? (
-              <div className="flex items-center space-x-3 bg-teal-50/80 border border-teal-200/80 pl-2 pr-3 py-1.5 rounded-full shadow-sm">
-                <div className="w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-xs uppercase shadow-sm">
-                  {currentUser.name?.charAt(0) ?? 'U'}
+              <div className="space-y-1 pb-3 border-b border-slate-100">
+                <div className="text-sm font-bold text-slate-900 truncate">
+                  {currentUser.name || 'User Account'}
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-slate-900 leading-tight">{currentUser.name || 'User'}</span>
-                  <span className="text-[10px] text-teal-700 font-medium">{currentUser.email}</span>
+                <div className="text-xs text-slate-500 font-medium truncate">
+                  {currentUser.email || 'Verified User'}
                 </div>
-                <button type="button" onClick={onLogout} className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1" title="Logout" aria-label="Logout">
-                  <LogOut className="w-4 h-4" />
-                </button>
+                <div className="pt-1.5 flex items-center space-x-1.5 text-[11px] font-semibold text-emerald-600">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span>Verified Active Member</span>
+                </div>
               </div>
             ) : (
-              <div ref={flipWrapRef} onMouseEnter={handleFlipEnter} onMouseLeave={handleFlipLeave} onClick={handleLoginClick} style={{ perspective: '600px', cursor: 'pointer' }} className="relative w-36 h-11">
-                <div ref={flipInnerRef} style={FLIP_INNER_STYLE}>
-                  {/* Front */}
-                  <div style={FRONT_FACE_STYLE} className="absolute inset-0 flex items-center justify-center px-4 rounded-full bg-teal-50 border border-teal-200 shadow-sm">
-                    <span className="text-sm font-semibold text-slate-800">Login</span>
-                  </div>
-                  {/* Back */}
-                  <div style={BACK_FACE_STYLE} className="absolute inset-0 flex items-center justify-center space-x-2 px-4 rounded-full bg-teal-600 border border-teal-700 shadow-md">
-                    <span className="text-sm font-bold text-white">Sign In</span>
-                    <span className="text-white text-base font-bold">→</span>
-                  </div>
-                </div>
+              <div className="pb-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCloseDropdown();
+                    onOpenLogin();
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Sign In / Log In
+                </button>
               </div>
             )}
-          </div>
 
-          {/* Hamburger */}
-          <div className="flex lg:hidden items-center">
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2.5 rounded-xl text-slate-700 hover:text-teal-800 hover:bg-teal-50 border border-slate-200 transition-all" aria-label="Toggle navigation menu">
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 animate-fadeIn">
-          <a href="#home" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-2.5 rounded-xl font-semibold text-teal-800 bg-teal-50 text-center">
-            Home
-          </a>
-          <div className="pt-2">
-            {currentUser ? (
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-sm uppercase">
-                    {currentUser.name?.charAt(0) ?? 'U'}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">{currentUser.name}</p>
-                    <p className="text-xs text-slate-500">{currentUser.email}</p>
-                  </div>
-                </div>
-                <button onClick={() => { setMobileMenuOpen(false); onLogout(); }} className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold border border-rose-200 transition-all text-sm">
-                  <LogOut className="w-4 h-4" /><span>Logout</span>
+            {/* LOGOUT BUTTON */}
+            {currentUser && onLogout && (
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCloseDropdown();
+                    setTimeout(() => onLogout(), 150);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-colors cursor-pointer shadow-xs"
+                >
+                  <span>Logout</span>
                 </button>
               </div>
-            ) : (
-              <button ref={mobileBtnRef} onMouseEnter={handleMobileHoverEnter} onMouseLeave={handleMobileHoverLeave} onTouchStart={handleMobileTouchStart} onTouchEnd={handleMobileTouchEnd}
-                onClick={() => { setMobileMenuOpen(false); onOpenLogin(); }}
-                className="relative w-full overflow-hidden flex items-center justify-center py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-md"
-              >
-                <div ref={mobileFillRef} style={FILL_STYLE} />
-                <span style={{ position: 'relative', zIndex: 1 }}>Login</span>
-              </button>
             )}
           </div>
         </div>
       )}
-    </header>
+
+      {/* USER ACCOUNT DETAILS MODAL (CLEAN & PROFESSIONAL MINIMAL DESIGN) */}
+      {showAccountModal && currentUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-fadeIn"
+          onClick={() => setShowAccountModal(false)}
+        >
+          <div
+            className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-slate-100 p-6 space-y-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">
+                User Account
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAccountModal(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-colors flex items-center justify-center cursor-pointer"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* User Profile Info Card (Clean & Minimal) */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+              <div className="text-base font-bold text-slate-900">
+                {currentUser.name || 'User Account'}
+              </div>
+              <div className="text-xs text-slate-500 font-medium">
+                {currentUser.email || 'Verified User'}
+              </div>
+              <div className="pt-2 flex items-center space-x-1.5 text-xs font-semibold text-emerald-600">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Verified Active Member</span>
+              </div>
+            </div>
+
+            {/* Action Button (Single Logout Action) */}
+            {onLogout && (
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAccountModal(false);
+                    onLogout();
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-colors cursor-pointer shadow-xs"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* URBANCOMPANY-STYLE MOBILE & IPAD BOTTOM NAVIGATION BAR */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <div className="flex items-center justify-around py-2 px-6 max-w-sm mx-auto">
+          {/* Logo / Brand Item (ServiceHub) */}
+          <div className="flex flex-col items-center justify-center space-y-1 cursor-pointer group">
+            <div className="w-5 h-5 rounded-md bg-teal-600 text-white flex items-center justify-center font-black text-[10px] shadow-xs">
+              S
+            </div>
+            <span className="text-[11px] font-bold text-slate-900 tracking-tight">
+              ServiceHub
+            </span>
+          </div>
+
+          {/* Account Button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (currentUser) {
+                setShowAccountModal(true);
+              } else {
+                onOpenLogin();
+              }
+            }}
+            className="flex flex-col items-center justify-center space-y-1 text-slate-500 hover:text-blue-600 transition-colors cursor-pointer group"
+          >
+            <div className="flex items-center justify-center p-1 rounded-lg transition-all duration-300 group-hover:bg-blue-50/80 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.2)]">
+              <User className="w-5 h-5 text-slate-600 group-hover:text-blue-600 transition-transform duration-300 group-hover:scale-110" />
+            </div>
+            <span className="text-[11px] font-medium text-slate-600 group-hover:text-blue-600">
+              Account
+            </span>
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { mainCategories } from "./data/serviceCategories";
 import { Sparkles } from "./common/Icons";
 
-const SelectServiceSection = ({ onSelectCategory }) => {
+const SelectServiceSection = ({ onSelectCategory, onOpenLogin }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const cardContainerRef = useRef(null);
   const imageRef = useRef(null);
@@ -206,11 +206,7 @@ const SelectServiceSection = ({ onSelectCategory }) => {
               style={{ transformStyle: "preserve-3d" }}
               className="will-change-transform"
             >
-              <button
-                type="button"
-                onClick={() => onSelectCategory?.(currentCategory)}
-                className="group w-full flex flex-col overflow-hidden rounded-3xl border border-slate-200/90 bg-white text-left shadow-xl hover:shadow-2xl transition-all duration-300 focus:outline-none"
-              >
+              <div className="group w-full flex flex-col overflow-hidden rounded-3xl border border-slate-200/90 bg-white text-left shadow-xl hover:shadow-2xl transition-all duration-300">
                 {/* Card Image with Parallax */}
                 <div className="relative w-full overflow-hidden bg-slate-100 h-64 sm:h-72">
                   <img
@@ -256,15 +252,21 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                     </p>
                   </div>
 
-                  {/* Book Now Button */}
-                  <div
+                  {/* Book Now Button — Triggers Login Modal */}
+                  <button
+                    type="button"
                     ref={btnRef}
-                    className="w-full py-3.5 rounded-2xl bg-teal-800 group-hover:bg-teal-700 text-white font-extrabold text-sm text-center shadow-md hover:shadow-lg transition-all duration-300 transform active:scale-98"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onSelectCategory) onSelectCategory(currentCategory);
+                      if (onOpenLogin) onOpenLogin();
+                    }}
+                    className="w-full py-3.5 rounded-2xl bg-teal-800 hover:bg-teal-700 text-white font-extrabold text-sm text-center shadow-md hover:shadow-lg transition-all duration-300 transform active:scale-98 cursor-pointer"
                   >
                     Book Now
-                  </div>
+                  </button>
                 </div>
-              </button>
+              </div>
             </div>
 
             {/* Slide Progress Indicator Dots Only (Arrows & Top Buttons Removed) */}
@@ -288,11 +290,9 @@ const SelectServiceSection = ({ onSelectCategory }) => {
         {/* --- DESKTOP VIEW GRID (>= lg) --- */}
         <div ref={desktopGridRef} className="hidden lg:grid mt-12 gap-8 lg:grid-cols-3">
           {mainCategories.map((category) => (
-            <button
+            <div
               key={category.id}
-              type="button"
-              onClick={() => onSelectCategory?.(category)}
-              className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white text-left shadow-sm transition duration-300 hover:-translate-y-1.5 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white text-left shadow-sm transition duration-300 hover:-translate-y-1.5 hover:shadow-2xl"
             >
               {/* Card Image */}
               <div className="relative w-full overflow-hidden bg-slate-100 h-72">
@@ -329,11 +329,20 @@ const SelectServiceSection = ({ onSelectCategory }) => {
                   </div>
                 </div>
 
-                <div className="w-full py-3.5 rounded-2xl bg-teal-800 group-hover:bg-teal-700 text-white font-bold text-sm text-center shadow-sm transition-colors duration-300">
+                {/* Book Now Button — Triggers Login Modal */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onSelectCategory) onSelectCategory(category);
+                    if (onOpenLogin) onOpenLogin();
+                  }}
+                  className="w-full py-3.5 rounded-2xl bg-teal-800 group-hover:bg-teal-700 text-white font-bold text-sm text-center shadow-sm transition-colors duration-300 cursor-pointer"
+                >
                   Book Now
-                </div>
+                </button>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
