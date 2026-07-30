@@ -314,7 +314,7 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
   };
 
   return (
-    <div ref={containerRef} className="w-full max-w-xl mx-auto space-y-1.5 sm:space-y-2 relative">
+    <div ref={containerRef} className="w-full max-w-xl md:max-w-4xl mx-auto space-y-1.5 sm:space-y-2 relative">
 
       {/* ── HEADER BANNER TRIGGER SEARCH BOX ───────────────────────────────────────────── */}
       <div className="flex items-center space-x-1.5 sm:space-x-3 w-full min-h-[38px] sm:min-h-[46px] md:min-h-[52px] min-w-0">

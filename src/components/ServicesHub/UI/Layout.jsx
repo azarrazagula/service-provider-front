@@ -40,46 +40,52 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
   const drawerRef = useRef(null);
   const headerImageRef = useRef(null);
   const headerTextRef = useRef(null);
+  const ipadImageRef = useRef(null);
+  const ipadTextRef = useRef(null);
 
-  // GSAP 3D Slide & Flip Right-to-Left Animation for Header Images & Synced Text
+  // GSAP 3D Slide & Flip Animation for Mobile & iPad Header Images & Synced Text
   useEffect(() => {
     const interval = setInterval(() => {
-      const imgEl = headerImageRef.current;
-      const textEl = headerTextRef.current;
-      if (!imgEl) return;
+      const imgEl = headerImageRef.current;   // Mobile image
+      const textEl = headerTextRef.current;   // Mobile text
+      const ipadImg = ipadImageRef.current;   // iPad image
+      const ipadText = ipadTextRef.current;   // iPad text
 
-      // Animate text fade out
-      if (textEl) {
-        gsap.to(textEl, { opacity: 0, y: -4, duration: 0.25, ease: 'power1.in' });
-      }
+      if (!imgEl && !ipadImg) return;
 
-      // Slide & flip out image to left
-      gsap.to(imgEl, {
-        x: -45,
-        rotationY: -90,
-        opacity: 0,
-        duration: 0.35,
-        ease: 'power2.in',
-        onComplete: () => {
-          setCurrentImageIndex((prev) => (prev + 1) % serviceSlides.length);
+      // Animate BOTH text elements out
+      if (textEl) gsap.to(textEl, { opacity: 0, y: -4, duration: 0.25, ease: 'power1.in' });
+      if (ipadText) gsap.to(ipadText, { opacity: 0, y: -4, duration: 0.25, ease: 'power1.in' });
 
-          // Animate text slide in cleanly from bottom
-          if (textEl) {
-            gsap.fromTo(
-              textEl,
-              { opacity: 0, y: 6 },
-              { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' }
-            );
-          }
+      // Slide & flip out BOTH images to left
+      const animateOut = (el) => {
+        if (!el) return;
+        gsap.to(el, { x: -45, rotationY: -90, opacity: 0, duration: 0.35, ease: 'power2.in' });
+      };
+      animateOut(imgEl);
+      animateOut(ipadImg);
 
-          // Slide & flip in image from right
-          gsap.fromTo(
-            imgEl,
-            { x: 45, rotationY: 90, opacity: 0 },
-            { x: 0, rotationY: 0, opacity: 1, duration: 0.45, ease: 'back.out(1.3)' }
-          );
-        },
-      });
+      // After out-animation, update slide and animate in
+      setTimeout(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % serviceSlides.length);
+
+        // Text slide in
+        const animateTextIn = (el) => {
+          if (!el) return;
+          gsap.fromTo(el, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' });
+        };
+        animateTextIn(textEl);
+        animateTextIn(ipadText);
+
+        // Image flip in
+        const animateImgIn = (el) => {
+          if (!el) return;
+          gsap.fromTo(el, { x: 45, rotationY: 90, opacity: 0 }, { x: 0, rotationY: 0, opacity: 1, duration: 0.45, ease: 'back.out(1.3)' });
+        };
+        animateImgIn(imgEl);
+        animateImgIn(ipadImg);
+      }, 360);
+
     }, 3200);
 
     return () => clearInterval(interval);
@@ -115,47 +121,93 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900 relative pb-16 lg:pb-0">
       {/* CUSTOM POSTER HEADER BANNER FOR MOBILE & IPAD (< 1024px) */}
-      <div className="lg:hidden w-full bg-[#40826D] text-white p-4 sm:p-5 pb-2 sm:pb-3 shadow-md transition-colors relative overflow-hidden space-y-2">
-        {/* TOP: SearchBar */}
-        <div className="w-full max-w-xl mx-auto">
-          <SearchBar showNotification={showNotification} />
+      <div className="lg:hidden w-full bg-[#40826D] text-white shadow-md transition-colors relative overflow-hidden">
+
+        {/* SearchBar on top */}
+        <div className="w-full px-4 pt-3.5 pb-2 sm:px-5 sm:pt-4 sm:pb-3 md:px-10 md:pt-6 md:pb-4">
+          <div className="w-full max-w-xl md:max-w-4xl mx-auto">
+            <SearchBar showNotification={showNotification} />
+          </div>
         </div>
 
-        {/* BELOW SEARCHBAR: Poster Content */}
-        <div className="max-w-xl mx-auto flex items-stretch justify-between min-h-[110px]">
-          {/* Left Side: Text directly under SearchBar, Book Now 4px above bottom */}
-          <div className="flex-1 pr-3 flex flex-col justify-between pt-2 z-10">
-            {/* Text block right below SearchBar (Rich Multi-color Palette) */}
-            <div ref={headerTextRef} className="space-y-0.5" style={{ opacity: 1 }}>
-              {/* Category Tag: Warm Amber Gold */}
-              <div className="text-[11px] sm:text-xs font-bold text-amber-300 tracking-wide">
-                {serviceSlides[currentImageIndex].line2}
-              </div>
-              {/* Headline: Crisp Bold Pure White */}
-              <div className="text-sm sm:text-base font-black text-white leading-snug drop-shadow-sm">
-                {serviceSlides[currentImageIndex].line1}
-              </div>
-              {/* Description: Soft Light Mint Green */}
-              <div className="text-[11px] sm:text-xs text-emerald-100/90 font-medium">
-                {serviceSlides[currentImageIndex].line3}
-              </div>
-            </div>
+        {/* ── MOBILE ONLY (< 768px): Matches iPad composition perfectly ── */}
+        <div className="md:hidden relative px-4 py-3 min-h-[175px] flex flex-col justify-center overflow-hidden">
 
-            {/* Book now -> (Warm Amber Gold Accent) */}
-            <div className="flex items-center space-x-1.5 pt-2 pb-[10px] text-xs sm:text-sm font-bold text-amber-300 cursor-pointer hover:text-amber-200 transition-colors">
-              <span>Book now</span>
-              <ArrowRight className="w-3.5 h-3.5 text-amber-300 animate-pulse shrink-0" />
+          {/* Decorative background circles (mobile scale) */}
+          <div className="absolute top-[-30px] right-[35%] w-36 h-36 bg-white/5 rounded-full pointer-events-none" />
+          <div className="absolute bottom-[-40px] right-[5%] w-44 h-44 bg-white/5 rounded-full pointer-events-none" />
+          <div className="absolute top-[5px] left-[-15px] w-24 h-24 bg-white/5 rounded-full pointer-events-none" />
+
+          {/* Left Text — 56% width, vertically centered to align with Doctor's neck level */}
+          <div ref={headerTextRef} className="w-[56%] flex flex-col justify-center space-y-2 z-10 pr-1" style={{ opacity: 1 }}>
+            <div className="inline-flex">
+              <span className="text-[9px] font-extrabold text-amber-300 tracking-wider uppercase bg-white/10 px-2.5 py-0.5 rounded-full whitespace-nowrap">
+                {serviceSlides[currentImageIndex].line2}
+              </span>
+            </div>
+            <div className="text-[14px] font-black text-white leading-tight drop-shadow-sm whitespace-nowrap">
+              {serviceSlides[currentImageIndex].line1}
+            </div>
+            <div className="text-[11px] text-emerald-100/90 font-medium whitespace-nowrap">
+              {serviceSlides[currentImageIndex].line3}
+            </div>
+            <div className="flex items-center pt-1">
+              <button className="flex items-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-[11px] px-4 py-1.5 rounded-full shadow-md transition-all duration-200 hover:scale-105">
+                <span>Book now</span>
+                <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+              </button>
             </div>
           </div>
 
-          {/* Right Side: Professional Image touching bottom-right corner (Enlarged) */}
-          <div className="shrink-0 w-32 sm:w-40 h-36 sm:h-44 flex items-end justify-center relative overflow-visible self-end -mb-3 -mr-1" style={{ perspective: 1000 }}>
+          {/* Image — 52% absolute right, full height top to bottom like iPad */}
+          <div className="absolute right-0 top-0 bottom-0 w-[52%] flex items-end justify-end overflow-visible z-0" style={{ perspective: 1000 }}>
             <img
               ref={headerImageRef}
               src={serviceSlides[currentImageIndex].image}
               alt="Service Professional"
-              className="w-full h-full object-contain filter drop-shadow-2xl scale-150 object-bottom"
-              style={{ transformStyle: 'preserve-3d' }}
+              className="w-full h-full object-contain filter drop-shadow-2xl"
+              style={{ transformStyle: 'preserve-3d', objectPosition: 'right bottom' }}
+            />
+          </div>
+        </div>
+
+        {/* ── IPAD ONLY (md: 768px+): Premium wide banner ── */}
+        <div className="hidden md:flex relative w-full max-w-4xl mx-auto items-stretch min-h-[310px] px-12 pb-8 overflow-hidden">
+
+          {/* Decorative background circles */}
+          <div className="absolute top-[-40px] right-[30%] w-64 h-64 bg-white/5 rounded-full pointer-events-none" />
+          <div className="absolute bottom-[-60px] right-[10%] w-80 h-80 bg-white/5 rounded-full pointer-events-none" />
+          <div className="absolute top-[10px] left-[-20px] w-40 h-40 bg-white/5 rounded-full pointer-events-none" />
+
+          {/* iPad Left Text */}
+          <div ref={ipadTextRef} className="flex-1 flex flex-col justify-center space-y-4 z-10 pr-10">
+            <div className="inline-flex">
+              <span className="text-xs font-extrabold text-amber-300 tracking-[0.2em] uppercase bg-white/10 px-3 py-1 rounded-full">
+                {serviceSlides[currentImageIndex].line2}
+              </span>
+            </div>
+            <div className="text-4xl font-black text-white leading-tight drop-shadow-md">
+              {serviceSlides[currentImageIndex].line1}
+            </div>
+            <div className="text-lg text-emerald-100/90 font-medium">
+              {serviceSlides[currentImageIndex].line3}
+            </div>
+            <div className="flex items-center space-x-3 mt-2">
+              <button className="flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 text-gray-900 font-extrabold text-base px-6 py-2.5 rounded-full shadow-lg transition-all duration-200 hover:scale-105">
+                <span>Book now</span>
+                <ArrowRight className="w-5 h-5 shrink-0" />
+              </button>
+            </div>
+          </div>
+
+          {/* iPad Right Image: absolute, full height, flush to right edge */}
+          <div className="absolute right-0 bottom-0 top-0 w-[52%] flex items-end justify-end overflow-visible" style={{ perspective: 1000 }}>
+            <img
+              ref={ipadImageRef}
+              src={serviceSlides[currentImageIndex].image}
+              alt="Service Professional"
+              className="w-full h-full object-contain filter drop-shadow-2xl"
+              style={{ transformStyle: 'preserve-3d', objectPosition: 'right bottom' }}
             />
           </div>
         </div>
