@@ -51,7 +51,7 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
 
       if (data.success && data.isAvailable) {
         setVerificationResult(data.data);
-        // Show details above button for 3 seconds, then trigger onSelectDateTime & clear
+        // Show details above button for 1.8 seconds, then trigger onSelectDateTime & clear
         setTimeout(() => {
           if (onSelectDateTime) {
             onSelectDateTime({
@@ -60,13 +60,13 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
             });
           }
           setVerificationResult(null);
-        }, 3000);
+        }, 1800);
       } else {
         setErrorMsg(data.message || 'Selected slot is unavailable. Please choose another date or time.');
       }
     } catch (err) {
       console.error('Error verifying slot:', err);
-      // Fallback after 3 seconds
+      // Fallback after 1.8 seconds
       setTimeout(() => {
         if (onSelectDateTime) {
           onSelectDateTime({
@@ -77,7 +77,7 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
           });
         }
         setVerificationResult(null);
-      }, 3000);
+      }, 1800);
     } finally {
       setIsVerifying(false);
     }
@@ -156,7 +156,7 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
       )}
 
       {verificationResult && (
-        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
+        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1 animate-fadeIn">
           <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-800">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Slot Verified & Available!</span>
@@ -167,18 +167,20 @@ const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
         </div>
       )}
 
-      {/* Confirm Date & Time Schedule Button (#2563EB Blue Primary CTA) */}
-      <button
-        type="button"
-        disabled={isVerifying}
-        onClick={handleConfirm}
-        className="w-full py-3.5 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/25 transition-all duration-300 transform active:scale-98 cursor-pointer"
-      >
-        <CheckCircle2 className="w-5 h-5 text-blue-100" />
-        <span>
-          {isVerifying ? 'Verifying Slot...' : 'Confirm Schedule'}
-        </span>
-      </button>
+      {/* Confirm Date & Time Schedule Button — Hides once verified */}
+      {!verificationResult && (
+        <button
+          type="button"
+          disabled={isVerifying}
+          onClick={handleConfirm}
+          className="w-full py-3.5 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/25 transition-all duration-300 transform active:scale-98 cursor-pointer"
+        >
+          <CheckCircle2 className="w-5 h-5 text-blue-100" />
+          <span>
+            {isVerifying ? 'Verifying Slot...' : 'Confirm Schedule'}
+          </span>
+        </button>
+      )}
     </div>
   );
 };

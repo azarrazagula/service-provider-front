@@ -1,13 +1,89 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SearchBar from '../Location/SearchBar';
-import { X, User, CheckCircle2 } from '../../home/common/Icons';
+import { X, User, CheckCircle2, ArrowRight } from '../../home/common/Icons';
 import { gsap } from 'gsap';
+
+import doctorImg from '../../../assets/DoctorBG.webp';
+import electricianImg from '../../../assets/ElectricianBG.webp';
+import plumberImg from '../../../assets/PlumberBG.webp';
+
+const serviceSlides = [
+  {
+    id: 'doctor',
+    image: doctorImg,
+    line1: 'Certified Healthcare Doctors',
+    line2: 'Instant Home Consultation',
+    line3: 'Top Verified Medical Care',
+  },
+  {
+    id: 'electrician',
+    image: electricianImg,
+    line1: 'Certified Master Electricians',
+    line2: 'Safe Wiring & Repairs',
+    line3: '30-Minute Fast Arrival',
+  },
+  {
+    id: 'plumber',
+    image: plumberImg,
+    line1: 'Expert Master Plumbers',
+    line2: 'Leak Repair & Fitting',
+    line3: 'Prompt & Clean Execution',
+  },
+];
 
 const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const containerRef = useRef(null);
   const drawerRef = useRef(null);
+  const headerImageRef = useRef(null);
+  const headerTextRef = useRef(null);
+
+  // GSAP 3D Slide & Flip Right-to-Left Animation for Header Images & Synced Text
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const imgEl = headerImageRef.current;
+      const textEl = headerTextRef.current;
+      if (!imgEl) return;
+
+      // Animate text fade out
+      if (textEl) {
+        gsap.to(textEl, { opacity: 0, y: -4, duration: 0.25, ease: 'power1.in' });
+      }
+
+      // Slide & flip out image to left
+      gsap.to(imgEl, {
+        x: -45,
+        rotationY: -90,
+        opacity: 0,
+        duration: 0.35,
+        ease: 'power2.in',
+        onComplete: () => {
+          setCurrentImageIndex((prev) => (prev + 1) % serviceSlides.length);
+
+          // Animate text slide in cleanly from bottom
+          if (textEl) {
+            gsap.fromTo(
+              textEl,
+              { opacity: 0, y: 6 },
+              { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' }
+            );
+          }
+
+          // Slide & flip in image from right
+          gsap.fromTo(
+            imgEl,
+            { x: 45, rotationY: 90, opacity: 0 },
+            { x: 0, rotationY: 0, opacity: 1, duration: 0.45, ease: 'back.out(1.3)' }
+          );
+        },
+      });
+    }, 3200);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // GSAP Floating Card Entrance Animation
   useEffect(() => {
@@ -38,13 +114,59 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900 relative pb-16 lg:pb-0">
+      {/* CUSTOM POSTER HEADER BANNER FOR MOBILE & IPAD (< 1024px) */}
+      <div className="lg:hidden w-full bg-[#40826D] text-white p-4 sm:p-5 pb-2 sm:pb-3 shadow-md transition-colors relative overflow-hidden space-y-2">
+        {/* TOP: SearchBar */}
+        <div className="w-full max-w-xl mx-auto">
+          <SearchBar showNotification={showNotification} />
+        </div>
 
-      {/* TOP NAVIGATION BAR (CLEAN LIGHT HEADER — NO HAMBURGER MENU) */}
-      <div className={`sticky top-0 ${menuOpen ? 'z-[999]' : 'z-40'}`}>
+        {/* BELOW SEARCHBAR: Poster Content */}
+        <div className="max-w-xl mx-auto flex items-stretch justify-between min-h-[110px]">
+          {/* Left Side: Text directly under SearchBar, Book Now 4px above bottom */}
+          <div className="flex-1 pr-3 flex flex-col justify-between pt-2 z-10">
+            {/* Text block right below SearchBar (Rich Multi-color Palette) */}
+            <div ref={headerTextRef} className="space-y-0.5" style={{ opacity: 1 }}>
+              {/* Category Tag: Warm Amber Gold */}
+              <div className="text-[11px] sm:text-xs font-bold text-amber-300 tracking-wide">
+                {serviceSlides[currentImageIndex].line2}
+              </div>
+              {/* Headline: Crisp Bold Pure White */}
+              <div className="text-sm sm:text-base font-black text-white leading-snug drop-shadow-sm">
+                {serviceSlides[currentImageIndex].line1}
+              </div>
+              {/* Description: Soft Light Mint Green */}
+              <div className="text-[11px] sm:text-xs text-emerald-100/90 font-medium">
+                {serviceSlides[currentImageIndex].line3}
+              </div>
+            </div>
+
+            {/* Book now -> (Warm Amber Gold Accent) */}
+            <div className="flex items-center space-x-1.5 pt-2 pb-[10px] text-xs sm:text-sm font-bold text-amber-300 cursor-pointer hover:text-amber-200 transition-colors">
+              <span>Book now</span>
+              <ArrowRight className="w-3.5 h-3.5 text-amber-300 animate-pulse shrink-0" />
+            </div>
+          </div>
+
+          {/* Right Side: Professional Image touching bottom-right corner (Enlarged) */}
+          <div className="shrink-0 w-32 sm:w-40 h-36 sm:h-44 flex items-end justify-center relative overflow-visible self-end -mb-3 -mr-1" style={{ perspective: 1000 }}>
+            <img
+              ref={headerImageRef}
+              src={serviceSlides[currentImageIndex].image}
+              alt="Service Professional"
+              className="w-full h-full object-contain filter drop-shadow-2xl scale-150 object-bottom"
+              style={{ transformStyle: 'preserve-3d' }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* TOP NAVIGATION BAR FOR DESKTOP ONLY (>= 1024px) */}
+      <div className={`hidden lg:block sticky top-0 ${menuOpen ? 'z-[999]' : 'z-40'}`}>
         <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between relative">
 
-            {/* BRAND NAME: ServiceHub */}
+            {/* BRAND HEADER (DESKTOP) */}
             <div className="flex-1 flex justify-center items-center">
               <div className="flex items-center space-x-2 cursor-pointer">
                 <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -226,7 +348,7 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
 
       {/* MAIN CONTAINER */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 flex flex-col items-center justify-start">
-        <div ref={containerRef} className="w-full max-w-xl mx-auto">
+        <div ref={containerRef} className="hidden lg:block w-full max-w-xl mx-auto">
           <SearchBar showNotification={showNotification} />
         </div>
       </main>
