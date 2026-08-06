@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, CheckCircle2, Calendar, ChevronDown, ArrowLeft } from '../../home/common/Icons';
+import { createPortal } from 'react-dom';
+import { Search, CheckCircle2, Calendar, ChevronDown, ArrowLeft } from '../../home/UI/Icons';
 import Dates from './Dates';
 import { gsap } from 'gsap';
 
@@ -16,8 +17,8 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [confirmedCity, setConfirmedCity] = useState('');
+  const [selectedCity, setSelectedCity] = useState(() => sessionStorage.getItem('selectedCity') || '');
+  const [confirmedCity, setConfirmedCity] = useState(() => sessionStorage.getItem('selectedCity') || '');
   const [locationsList, setLocationsList] = useState(defaultCities);
 
   // ── GSAP Typewriter Placeholder Animation ─────────────────────────────
@@ -162,6 +163,9 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
   const collapseSearch = (cityName) => {
     setSelectedCity(cityName);
     setConfirmedCity('');
+    if (cityName) {
+      sessionStorage.setItem('selectedCity', cityName);
+    }
     if (onSelectLocation) onSelectLocation(cityName);
 
     const tl = gsap.timeline({ onComplete: () => setSearched(true) });
@@ -305,6 +309,9 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
   const handleDateTimeConfirm = (scheduleData) => {
     const activeCity = selectedCity || scheduleData?.city || query || 'Chennai';
     setConfirmedCity(activeCity);
+    if (scheduleData) {
+      sessionStorage.setItem('verifiedSchedule', JSON.stringify(scheduleData));
+    }
     expandSearch();
     setIsFullScreenOpen(false);
 
@@ -340,141 +347,153 @@ const CollapsibleSearchAndDate = ({ onSelectLocation, onSelectDateTime, showNoti
         </div>
       </div>
 
-      {/* ── DEDICATED FULL SCREEN SEARCH OVERLAY PAGE ─────────────────────────────────── */}
-      {isFullScreenOpen && (
-        <div className="fixed inset-0 z-[9999] bg-white flex flex-col font-sans overflow-hidden animate-fadeIn">
+      {/* ── DEDICATED SEARCH OVERLAY: FULLSCREEN ON MOBILE, MEDIUM MODAL CARD ON DESKTOP ── */}
+      {isFullScreenOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[99999] bg-white lg:bg-slate-950/50 lg:backdrop-blur-sm flex flex-col lg:items-center lg:justify-center lg:p-6 font-sans overflow-hidden animate-fadeIn"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsFullScreenOpen(false);
+              expandSearch();
+            }
+          }}
+        >
+          {/* MAIN MODAL CONTAINER — Full screen on mobile, Medium Card on Desktop */}
+          <div className="w-full h-full lg:h-auto lg:max-h-[85vh] lg:max-w-2xl bg-white lg:rounded-3xl lg:shadow-2xl lg:border lg:border-slate-100 flex flex-col overflow-hidden transition-all">
 
-          {/* OVERLAY TOP HEADER BAR */}
-          <div className="p-3 sm:p-4 bg-white border-b border-slate-100 shadow-sm flex items-center space-x-2.5">
-            {/* Back Arrow Button */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsFullScreenOpen(false);
-                expandSearch();
-              }}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 transition-colors cursor-pointer"
-              title="Go Back"
+            {/* OVERLAY TOP HEADER BAR */}
+            <div className="p-3 sm:p-4 bg-white border-b border-slate-100 shadow-xs flex items-center space-x-2.5">
+              {/* Back Arrow Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsFullScreenOpen(false);
+                  expandSearch();
+                }}
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 transition-colors cursor-pointer"
+                title="Go Back"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+
+              {/* GSAP SEARCH BAR & D&T ANIMATION CONTAINER */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center space-x-2 w-full min-h-[42px]">
+
+                  {/* SEARCH BOX — GSAP animation target */}
+                  <div
+                    ref={searchBoxRef}
+                    className="flex items-center justify-between bg-slate-100 border border-slate-200 focus-within:border-slate-800 rounded-xl p-1 pl-3 overflow-hidden flex-1 min-w-0 transition-colors"
+                  >
+                    <input
+                      ref={searchInputRef}
+                      autoFocus
+                      type="text"
+                      value={query}
+                      onChange={(e) => {
+                        setQuery(e.target.value);
+                        setConfirmedCity('');
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleSearchClick(e);
+                        }
+                      }}
+                      placeholder={query ? '' : animatedPlaceholder}
+                      className="flex-1 py-1.5 text-xs sm:text-sm font-semibold text-slate-800 bg-transparent outline-none placeholder:text-slate-400 min-w-0"
+                      style={{ minWidth: 0 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSearchClick}
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-900 text-white hover:bg-slate-800 flex items-center justify-center shrink-0 transition-all cursor-pointer"
+                      aria-label={searched ? 'Back to search' : 'Search'}
+                    >
+                      <Search className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* DATE & TIME BUTTON — GSAP expands inside overlay */}
+                  <div
+                    ref={dtBtnRef}
+                    className="overflow-hidden shrink-0 min-w-0"
+                    style={{ opacity: 0, width: 0, flex: '0 0 0%' }}
+                  >
+                    <button
+                      type="button"
+                      onClick={toggleDropdown}
+                      className="w-full h-[40px] flex items-center justify-between bg-white border border-blue-200 px-3 rounded-xl shadow-xs cursor-pointer group min-w-0 transition-colors"
+                    >
+                      <div className="flex items-center space-x-2 min-w-0 flex-1">
+                        <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                          <Calendar className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-bold text-slate-900 truncate">Select Date & Time</span>
+                      </div>
+                      <div ref={chevronRef} className="text-slate-400 pl-1 shrink-0">
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            {/* GSAP ANIMATED DATES PANEL */}
+            <div
+              ref={panelRef}
+              style={{ overflow: 'hidden', height: 0, opacity: 0 }}
+              className="w-full bg-slate-50 border-b border-slate-200/80 shadow-inner z-20"
             >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
+              <div className="p-3 sm:p-4 max-w-xl mx-auto">
+                <Dates
+                  currentLocation={selectedCity || 'Chennai'}
+                  onSelectDateTime={handleDateTimeConfirm}
+                />
+              </div>
+            </div>
 
-            {/* GSAP SEARCH BAR & D&T ANIMATION CONTAINER */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2 w-full min-h-[42px]">
-
-                {/* SEARCH BOX — GSAP animation target */}
-                <div
-                  ref={searchBoxRef}
-                  className="flex items-center justify-between bg-slate-100 border border-slate-200 focus-within:border-slate-800 rounded-xl p-1 pl-3 overflow-hidden flex-1 min-w-0 transition-colors"
-                >
-                  <input
-                    ref={searchInputRef}
-                    autoFocus
-                    type="text"
-                    value={query}
-                    onChange={(e) => {
-                      setQuery(e.target.value);
-                      setConfirmedCity('');
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleSearchClick(e);
-                      }
-                    }}
-                    placeholder={query ? '' : animatedPlaceholder}
-                    className="flex-1 py-1.5 text-xs sm:text-sm font-semibold text-slate-800 bg-transparent outline-none placeholder:text-slate-400 min-w-0"
-                    style={{ minWidth: 0 }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSearchClick}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-900 text-white hover:bg-slate-800 flex items-center justify-center shrink-0 transition-all cursor-pointer"
-                    aria-label={searched ? 'Back to search' : 'Search'}
-                  >
-                    <Search className="w-3.5 h-3.5" />
-                  </button>
+            {/* OVERLAY BODY — SUGGESTED SERVICE LOCATIONS (ONLY SHOW WHEN NOT SEARCHED) */}
+            {!searched && (
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+                <div className="text-xs font-extrabold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Suggested Service Locations</span>
+                  <span className="text-[11px] text-slate-400 font-normal">{filteredCities.length} available</span>
                 </div>
 
-                {/* DATE & TIME BUTTON — GSAP expands inside overlay */}
-                <div
-                  ref={dtBtnRef}
-                  className="overflow-hidden shrink-0 min-w-0"
-                  style={{ opacity: 0, width: 0, flex: '0 0 0%' }}
-                >
-                  <button
-                    type="button"
-                    onClick={toggleDropdown}
-                    className="w-full h-[40px] flex items-center justify-between bg-white border border-blue-200 px-3 rounded-xl shadow-xs cursor-pointer group min-w-0 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2 min-w-0 flex-1">
-                      <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
-                        <Calendar className="w-3.5 h-3.5" />
+                <div className="bg-white border border-slate-100 rounded-2xl divide-y divide-slate-100 overflow-hidden shadow-xs">
+                  {filteredCities.map((city) => (
+                    <button
+                      key={city.id}
+                      type="button"
+                      onClick={() => handleCitySelect(city.name)}
+                      className="w-full p-3.5 text-left hover:bg-emerald-50/70 transition-colors flex items-center justify-between group cursor-pointer"
+                    >
+                      <div>
+                        <div className="text-sm font-bold text-slate-900 group-hover:text-emerald-700">
+                          {city.name}
+                        </div>
+                        <div className="text-xs text-slate-400">{city.region}</div>
                       </div>
-                      <span className="text-xs font-bold text-slate-900 truncate">Select Date & Time</span>
-                    </div>
-                    <div ref={chevronRef} className="text-slate-400 pl-1 shrink-0">
-                      <ChevronDown className="w-4 h-4" />
-                    </div>
-                  </button>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-800">
+                          {city.badge || 'Available'}
+                        </span>
+                        {selectedCity === city.name && (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
                 </div>
-
               </div>
-            </div>
+            )}
+
           </div>
-
-          {/* GSAP ANIMATED DATES PANEL */}
-          <div
-            ref={panelRef}
-            style={{ overflow: 'hidden', height: 0, opacity: 0 }}
-            className="w-full bg-slate-50 border-b border-slate-200/80 shadow-inner z-20"
-          >
-            <div className="p-3 sm:p-4 max-w-xl mx-auto">
-              <Dates
-                currentLocation={selectedCity || 'Chennai'}
-                onSelectDateTime={handleDateTimeConfirm}
-              />
-            </div>
-          </div>
-
-          {/* OVERLAY BODY — SUGGESTED SERVICE LOCATIONS (ONLY SHOW WHEN NOT SEARCHED) */}
-          {!searched && (
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              <div className="text-xs font-extrabold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                <span>Suggested Service Locations</span>
-                <span className="text-[11px] text-slate-400 font-normal">{filteredCities.length} available</span>
-              </div>
-
-              <div className="bg-white border border-slate-100 rounded-2xl divide-y divide-slate-100 overflow-hidden shadow-xs">
-                {filteredCities.map((city) => (
-                  <button
-                    key={city.id}
-                    type="button"
-                    onClick={() => handleCitySelect(city.name)}
-                    className="w-full p-3.5 text-left hover:bg-emerald-50/70 transition-colors flex items-center justify-between group cursor-pointer"
-                  >
-                    <div>
-                      <div className="text-sm font-bold text-slate-900 group-hover:text-emerald-700">
-                        {city.name}
-                      </div>
-                      <div className="text-xs text-slate-400">{city.region}</div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-800">
-                        {city.badge || 'Available'}
-                      </span>
-                      {selectedCity === city.name && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

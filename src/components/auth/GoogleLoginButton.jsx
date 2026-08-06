@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GoogleIcon, Loader2 } from '../home/common/Icons';
+import { GoogleIcon, Loader2 } from '../home/UI/Icons';
 import { googleLoginUser, saveAuthData } from './authService';
 
 const GoogleLoginButton = ({ onSuccess, onError }) => {
@@ -7,6 +7,16 @@ const GoogleLoginButton = ({ onSuccess, onError }) => {
   const [loading, setLoading] = useState(false);
 
   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+  }, [onSuccess, onError]);
+
+  const isInitializedRef = useRef(false);
 
   const processGoogleToken = async (idToken) => {
     if (!idToken) return;
@@ -19,8 +29,8 @@ const GoogleLoginButton = ({ onSuccess, onError }) => {
           user: response.data.user,
         });
 
-        if (onSuccess) {
-          onSuccess({
+        if (onSuccessRef.current) {
+          onSuccessRef.current({
             user: response.data.user,
             message: response.message || 'Google Sign-In successful!',
           });
@@ -29,53 +39,60 @@ const GoogleLoginButton = ({ onSuccess, onError }) => {
     } catch (err) {
       console.error('Google Auth error:', err);
       const errMsg = err.message || 'Google authentication failed';
-      if (onError) onError(errMsg);
+      if (onErrorRef.current) onErrorRef.current(errMsg);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    let intervalId = null;
+
     const handleCredentialResponse = (response) => {
       if (response.credential) {
         processGoogleToken(response.credential);
       }
     };
 
-    const renderHiddenGoogleButton = () => {
-      if (window.google?.accounts?.id && hiddenGoogleBtnRef.current) {
-        try {
-          hiddenGoogleBtnRef.current.innerHTML = '';
+    const initGoogleGsi = () => {
+      if (!window.google?.accounts?.id || !hiddenGoogleBtnRef.current) return false;
+
+      try {
+        if (!isInitializedRef.current) {
           window.google.accounts.id.initialize({
             client_id: clientId,
             callback: handleCredentialResponse,
             auto_select: false,
           });
-
-          window.google.accounts.id.renderButton(hiddenGoogleBtnRef.current, {
-            type: 'standard',
-            theme: 'outline',
-            size: 'large',
-            text: 'continue_with',
-            width: 350,
-          });
-        } catch (e) {
-          console.warn('Failed to initialize Google GSI:', e);
+          isInitializedRef.current = true;
         }
+
+        hiddenGoogleBtnRef.current.innerHTML = '';
+        window.google.accounts.id.renderButton(hiddenGoogleBtnRef.current, {
+          type: 'standard',
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          width: 350,
+        });
+        return true;
+      } catch (e) {
+        console.warn('Failed to initialize Google GSI:', e);
+        return false;
       }
     };
 
-    if (window.google?.accounts?.id) {
-      renderHiddenGoogleButton();
-    } else {
-      const interval = setInterval(() => {
-        if (window.google?.accounts?.id) {
-          clearInterval(interval);
-          renderHiddenGoogleButton();
+    if (!initGoogleGsi()) {
+      intervalId = setInterval(() => {
+        if (initGoogleGsi()) {
+          clearInterval(intervalId);
         }
       }, 100);
-      return () => clearInterval(interval);
     }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId]);
 

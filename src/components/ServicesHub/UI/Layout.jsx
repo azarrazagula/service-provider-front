@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SearchBar from '../Location/SearchBar';
-import { X, User, CheckCircle2, ArrowRight } from '../../home/common/Icons';
+import Doctors from '../Services/Doctors';
+import { X, User, CheckCircle2, ArrowRight } from '../../home/UI/Icons';
 import { gsap } from 'gsap';
 
 import doctorImg from '../../../assets/DoctorBG.webp';
@@ -36,7 +37,6 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const containerRef = useRef(null);
   const drawerRef = useRef(null);
   const headerImageRef = useRef(null);
   const headerTextRef = useRef(null);
@@ -124,7 +124,7 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
       <div className="lg:hidden w-full bg-[#40826D] text-white shadow-md transition-colors relative overflow-hidden">
 
         {/* SearchBar on top */}
-        <div className="w-full px-4 pt-3.5 pb-2 sm:px-5 sm:pt-4 sm:pb-3 md:px-10 md:pt-6 md:pb-4">
+        <div className="w-full px-4 pt-2.5 pb-2 sm:px-5 sm:pt-3 sm:pb-3 md:px-10 md:pt-5 md:pb-4">
           <div className="w-full max-w-xl md:max-w-4xl mx-auto">
             <SearchBar showNotification={showNotification} />
           </div>
@@ -216,19 +216,22 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
       {/* TOP NAVIGATION BAR FOR DESKTOP ONLY (>= 1024px) */}
       <div className={`hidden lg:block sticky top-0 ${menuOpen ? 'z-[999]' : 'z-40'}`}>
         <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-24 flex items-center justify-between relative">
 
-            {/* BRAND HEADER (DESKTOP) */}
-            <div className="flex-1 flex justify-center items-center">
-              <div className="flex items-center space-x-2 cursor-pointer">
-                <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  Service<span className="text-[#2563EB]">Hub</span>
-                </span>
-              </div>
+            {/* LEFT: BRAND LOGO */}
+            <div className="flex items-center space-x-2 cursor-pointer shrink-0">
+              <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Service<span className="text-[#2563EB]">Hub</span>
+              </span>
             </div>
 
-            {/* RIGHT: LOGIN / USER ICON ONLY (VISIBLE ON DESKTOP 1024px+, HIDDEN ON MOBILE & IPAD) */}
-            <div className="relative hidden lg:block">
+            {/* CENTER: SEARCHBAR */}
+            <div className="flex-1 max-w-xl mx-4">
+              <SearchBar showNotification={showNotification} />
+            </div>
+
+            {/* RIGHT: USER / ACCOUNT MENU BUTTON */}
+            <div className="relative shrink-0">
               <button
                 type="button"
                 onClick={() => {
@@ -369,15 +372,15 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
         </div>
       )}
 
-      {/* URBANCOMPANY-STYLE MOBILE & IPAD BOTTOM NAVIGATION BAR */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
-        <div className="flex items-center justify-around py-2 px-6 max-w-sm mx-auto">
+      {/* URBANCOMPANY-STYLE MOBILE & IPAD BOTTOM NAVIGATION BAR (< 1024px) */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden py-1 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <div className="flex items-center justify-around py-1 px-6 max-w-sm mx-auto">
           {/* Logo / Brand Item (ServiceHub) */}
           <div className="flex flex-col items-center justify-center space-y-1 cursor-pointer group">
-            <div className="w-5 h-5 text-black flex items-center justify-center font-bold text-[14px]">
+            <div className="w-3.5 h-3.5 text-black flex items-center justify-center font-bold text-[11px]">
               SH
             </div>
-            <span className="text-[11px] font-medium text-slate-600 group-hover:text-slate-900 tracking-tight">
+            <span className="text-[9.5px] font-normal text-slate-600 group-hover:text-slate-900 tracking-tight">
               ServiceHub
             </span>
           </div>
@@ -388,10 +391,10 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
             onClick={() => setShowAccountModal(true)}
             className="flex flex-col items-center justify-center space-y-1 text-slate-500 hover:text-blue-600 transition-colors cursor-pointer group"
           >
-            <div className="flex items-center justify-center p-1 rounded-lg transition-all duration-300 group-hover:bg-blue-50/80 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.2)]">
-              <User className="w-5 h-5 text-slate-600 group-hover:text-blue-600 transition-transform duration-300 group-hover:scale-110" />
+            <div className="flex items-center justify-center rounded-lg transition-all duration-300 group-hover:bg-blue-50/80 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.2)]">
+              <User className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-600 transition-transform duration-300 group-hover:scale-110" />
             </div>
-            <span className="text-[11px] font-medium text-slate-600 group-hover:text-blue-600">
+            <span className="text-[9.5px] font-normal text-slate-600 group-hover:text-blue-600">
               Account
             </span>
           </button>
@@ -399,10 +402,8 @@ const ServiceHubLayout = ({ currentUser, onLogout, showNotification }) => {
       </div>
 
       {/* MAIN CONTAINER */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 flex flex-col items-center justify-start">
-        <div ref={containerRef} className="hidden lg:block w-full max-w-xl mx-auto">
-          <SearchBar showNotification={showNotification} />
-        </div>
+      <main className="flex-1 w-full max-w-6xl mx-auto px-2 sm:px-4 lg:px-8 pt-4 sm:pt-6 pb-20 flex flex-col items-start justify-start">
+        <Doctors showNotification={showNotification} />
       </main>
 
       {/* FOOTER */}

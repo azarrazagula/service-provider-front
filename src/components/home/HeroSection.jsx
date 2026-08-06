@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Calendar, ArrowRight, CheckCircle2 } from "./common/Icons";
+import { Calendar, ArrowRight, CheckCircle2 } from "./UI/Icons";
 import { gsap } from "gsap";
 
 import cardiologistImg from "../../assets/Cardiologist (Heart).webp";

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, AlertCircle, Loader2, ArrowRight, Eye, EyeOff } from '../home/common/Icons';
+import { Mail, Lock, AlertCircle, Loader2, ArrowRight, Eye, EyeOff } from '../home/UI/Icons';
 import { loginUser, saveAuthData } from './authService';
 import GoogleLoginButton from './GoogleLoginButton';
 
@@ -140,6 +140,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
             id="login-email"
             type="email"
             name="email"
+            autoComplete="username email"
             value={formData.email}
             onChange={handleChange}
             onFocus={() => setFocusedInput('email')}
@@ -187,6 +188,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }) => {
             id="login-password"
             type={showPassword ? 'text' : 'password'}
             name="password"
+            autoComplete="current-password"
             value={formData.password}
             onChange={handleChange}
             onFocus={() => setFocusedInput('password')}

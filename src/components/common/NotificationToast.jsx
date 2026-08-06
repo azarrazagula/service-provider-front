@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, X } from '../home/common/Icons';
+import { CheckCircle2, X } from '../home/UI/Icons';
 
 const NotificationToast = ({ notification, onClose }) => {
   if (!notification) return null;

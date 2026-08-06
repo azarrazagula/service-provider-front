@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
-import { CheckCircle2, ShieldCheck, Sparkles, Users } from "./common/Icons";
+import { CheckCircle2, ShieldCheck, Sparkles, Users } from "./UI/Icons";
 
 const testimonialsData = [
   {

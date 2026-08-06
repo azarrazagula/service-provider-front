@@ -1,11 +1,11 @@
 import React from "react";
-import Navbar from "./common/Navbar";
+import Navbar from "./UI/Navbar";
 import HeroSection from "./HeroSection";
 import TrustBadge from "./TrustBadge";
 import SelectServiceSection from "./SelectServiceSection";
 import HowItWorksSection from "./HowItWorksSection";
 import TestimonialsSection from "./TestimonialsSection";
-import Footer from "./common/Footer";
+import Footer from "./UI/Footer";
 
 const HomePage = ({ currentUser, onOpenLogin, onLogout, onSelectCategory }) => {
   const scrollToServices = (e) => {

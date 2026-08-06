@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ShieldCheck, Lock, PhoneCall } from "./common/Icons";
+import { ShieldCheck, Lock, PhoneCall } from "./UI/Icons";
 import { gsap } from "gsap";
 
 const TrustBadge = () => {

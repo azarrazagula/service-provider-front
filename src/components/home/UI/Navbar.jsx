@@ -54,8 +54,8 @@ const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
               </span>
             </div>
 
-            {/* RIGHT SIDE: LOGIN / USER ICON ONLY (VISIBLE ON DESKTOP 1024px+, HIDDEN ON MOBILE & IPAD) */}
-            <div className="relative hidden lg:block">
+            {/* RIGHT SIDE: LOGIN / USER ICON (VISIBLE ON IPAD & DESKTOP >= 768px, HIDDEN ON MOBILE) */}
+            <div className="relative hidden md:block">
               <button
                 type="button"
                 onClick={() => {
@@ -65,7 +65,7 @@ const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
                     setDropdownOpen(true);
                   }
                 }}
-                className="p-2.5 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-300 hover:shadow-[0_0_16px_rgba(37,99,235,0.2)] flex items-center justify-center cursor-pointer group"
+                className="p-2.5 rounded-xl text-slate-700 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-300 hover:shadow-[0_0_16px_rgba(37,99,235,0.2)] flex items-center justify-center cursor-pointer group"
                 aria-label="Account Menu"
                 title="Account Menu"
               >
@@ -197,8 +197,8 @@ const Navbar = ({ onOpenLogin, currentUser, onLogout }) => {
         </div>
       )}
 
-      {/* URBANCOMPANY-STYLE MOBILE & IPAD BOTTOM NAVIGATION BAR */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+      {/* URBANCOMPANY-STYLE MOBILE BOTTOM NAVIGATION BAR ONLY (< 768px) */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-around py-2 px-6 max-w-sm mx-auto">
           {/* Logo / Brand Item (ServiceHub) */}
           <div className="flex flex-col items-center justify-center space-y-1 cursor-pointer group">

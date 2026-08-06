@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, User, Sparkles, ShieldCheck } from '../home/common/Icons';
+import { X, User, Sparkles, ShieldCheck } from '../home/UI/Icons';
 import { gsap } from 'gsap';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';

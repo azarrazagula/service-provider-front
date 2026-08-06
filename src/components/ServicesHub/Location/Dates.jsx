@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, CheckCircle2 } from '../../home/common/Icons';
+import { Clock, CheckCircle2 } from '../../home/UI/Icons';
 
 const Dates = ({ onSelectDateTime, currentLocation = '' }) => {
   const getTodayString = () => {
